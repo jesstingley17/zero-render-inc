@@ -158,15 +158,20 @@ export async function GET(request: NextRequest) {
       }
 
       if (!post) {
-        const availableSlugs = transformedPosts.map((p) => p.slug).join(", ")
+        const availableSlugs = transformedPosts.map((p) => p.slug)
+        const availableIds = transformedPosts.map((p) => p.originalId)
         console.error(`Post not found for slug: ${slug} (decoded: ${decodedSlug})`)
-        console.error(`Available slugs: ${availableSlugs}`)
+        console.error(`Available slugs (first 5): ${availableSlugs.slice(0, 5).join(", ")}`)
+        console.error(`Available IDs (first 5): ${availableIds.slice(0, 5).join(", ")}`)
+        
+        // Return more detailed error for debugging
         return NextResponse.json({ 
           error: "Post not found",
           debug: {
             searchedSlug: slug,
             decodedSlug: decodedSlug,
-            availableSlugs: availableSlugs.split(", ").slice(0, 5) // First 5 for debugging
+            availableSlugs: availableSlugs.slice(0, 10), // First 10 for debugging
+            totalPosts: transformedPosts.length
           }
         }, { status: 404 })
       }
@@ -185,6 +190,12 @@ export async function GET(request: NextRequest) {
 
     // Remove debug fields before returning
     const cleanedPosts = transformedPosts.map(({ originalSlug, originalId, ...post }) => post)
+    
+    // Log first post for debugging (only in development)
+    if (process.env.NODE_ENV !== 'production' && cleanedPosts.length > 0) {
+      console.log('Sample post slug:', cleanedPosts[0].slug)
+      console.log('Sample post title:', cleanedPosts[0].title)
+    }
 
     return NextResponse.json({ posts: cleanedPosts })
   } catch (error) {

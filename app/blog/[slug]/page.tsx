@@ -45,6 +45,10 @@ export default function BlogPostPage() {
         const data = await response.json()
 
         if (!response.ok) {
+          // Log debug info if available
+          if (data.debug) {
+            console.error("Post lookup failed:", data.debug)
+          }
           throw new Error(data.error || "Failed to fetch blog post")
         }
 
