@@ -21,21 +21,36 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Email and message are required" }, { status: 400 })
     }
 
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      return NextResponse.json({ error: "Invalid email format" }, { status: 400 })
+    }
+
     const resend = getResend()
     const { data, error } = await resend.emails.send({
-      from: "ZeroRender <onboarding@resend.dev>",
+      from: "ZeroRender <hello@zero-render.com>",
       to: ["jtingley@zero-render.com", "tplymale@zero-render.com", "kara@zero-render.com"],
       replyTo: email,
       subject: `New ${type === "inquiry" ? "Inquiry" : "Contact"}: ${packageTitle || "General"}`,
       text: `From: ${email}\n\n${message}`,
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #333;">New Contact Form Submission</h2>
-          <p><strong>From:</strong> ${email}</p>
-          <p><strong>Package/Service:</strong> ${packageTitle || "General Inquiry"}</p>
-          <hr style="border: 1px solid #eee; margin: 20px 0;">
-          <div style="white-space: pre-wrap; line-height: 1.6;">${message}</div>
-        </div>
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
+          <div style="background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h2 style="color: #000; margin-top: 0;">New Contact Form Submission</h2>
+            <p style="color: #333;"><strong>From:</strong> ${email}</p>
+            <p style="color: #333;"><strong>Package/Service:</strong> ${packageTitle || "General Inquiry"}</p>
+            <hr style="border: 1px solid #eee; margin: 20px 0;">
+            <div style="white-space: pre-wrap; line-height: 1.6; color: #333;">${message.replace(/\n/g, "<br>")}</div>
+          </div>
+        </body>
+        </html>
       `,
     })
 

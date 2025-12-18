@@ -30,15 +30,24 @@ export async function POST(request: NextRequest) {
     // Send notification to founders about new newsletter subscriber
     const resend = getResend()
     const { data, error } = await resend.emails.send({
-      from: "ZeroRender <onboarding@resend.dev>",
+      from: "ZeroRender <hello@zero-render.com>",
       to: ["jtingley@zero-render.com", "tplymale@zero-render.com", "kara@zero-render.com"],
       subject: "New Newsletter Subscription",
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #333;">New Newsletter Subscriber</h2>
-          <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Subscribed at:</strong> ${new Date().toLocaleString()}</p>
-        </div>
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
+          <div style="background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h2 style="color: #000; margin-top: 0;">New Newsletter Subscriber</h2>
+            <p style="color: #333;"><strong>Email:</strong> ${email}</p>
+            <p style="color: #333;"><strong>Subscribed at:</strong> ${new Date().toLocaleString()}</p>
+          </div>
+        </body>
+        </html>
       `,
     })
 

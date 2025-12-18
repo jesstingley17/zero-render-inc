@@ -119,17 +119,39 @@ export async function POST(request: NextRequest) {
 
     // Send email with Resend
     const resend = getResend()
-    await resend.emails.send({
-      from: "ZeroRender Jobs <noreply@zero-render.com>",
+    const { data: emailData, error: emailError } = await resend.emails.send({
+      from: "ZeroRender Jobs <hello@zero-render.com>",
       to: ["jtingley@zero-render.com", "tplymale@zero-render.com", "kara@zero-render.com"],
+      replyTo: data.email || undefined,
       subject: `New Job Application: ${data.position} - ${data.name}`,
-      html: emailHtml,
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
+          <div style="background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            ${emailHtml}
+          </div>
+        </body>
+        </html>
+      `,
       attachments: attachments.length > 0 ? attachments : undefined,
     })
 
-    return NextResponse.json({ success: true })
+    if (emailError) {
+      console.error("Resend email error:", emailError)
+      throw new Error("Failed to send application email")
+    }
+
+    return NextResponse.json({ success: true, emailId: emailData?.id })
   } catch (error) {
     console.error("Job application submission error:", error)
-    return NextResponse.json({ error: "Failed to submit application" }, { status: 500 })
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Failed to submit application" },
+      { status: 500 }
+    )
   }
 }
