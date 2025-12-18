@@ -1,7 +1,16 @@
 import { Resend } from "resend"
 import { type NextRequest, NextResponse } from "next/server"
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+export const dynamic = "force-dynamic"
+export const runtime = "nodejs"
+
+const getResend = () => {
+  const apiKey = process.env.RESEND_API_KEY
+  if (!apiKey) {
+    throw new Error("RESEND_API_KEY is not configured")
+  }
+  return new Resend(apiKey)
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,6 +28,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Send notification to founders about new newsletter subscriber
+    const resend = getResend()
     const { data, error } = await resend.emails.send({
       from: "ZeroRender <onboarding@resend.dev>",
       to: ["jtingley@zero-render.com", "tplymale@zero-render.com", "kara@zero-render.com"],

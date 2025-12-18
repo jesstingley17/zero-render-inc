@@ -617,6 +617,14 @@ export default function Page() {
                     </a>
                   </li>
                 ))}
+                <li>
+                  <a
+                    href="/privacy-policy"
+                    className="hover:text-white transition-colors touch-manipulation inline-block py-1"
+                  >
+                    Privacy Policy
+                  </a>
+                </li>
               </ul>
             </div>
           </div>

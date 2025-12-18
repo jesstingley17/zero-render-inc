@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server"
-import { stripe } from "@/lib/stripe"
+import { getStripe } from "@/lib/stripe"
 import { createClient } from "@/lib/supabase/server"
+
+export const dynamic = "force-dynamic"
+export const runtime = "nodejs"
 
 export async function POST(request: Request) {
   try {
@@ -28,6 +31,7 @@ export async function POST(request: Request) {
     }
 
     // Create Stripe checkout session
+    const stripe = getStripe()
     const session = await stripe.checkout.sessions.create({
       ui_mode: "embedded",
       line_items: [

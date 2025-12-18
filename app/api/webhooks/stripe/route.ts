@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server"
-import { stripe } from "@/lib/stripe"
+import { getStripe } from "@/lib/stripe"
 import { createClient } from "@/lib/supabase/server"
 import type Stripe from "stripe"
+
+export const dynamic = "force-dynamic"
+export const runtime = "nodejs"
 
 export async function POST(request: Request) {
   const body = await request.text()
@@ -12,6 +15,7 @@ export async function POST(request: Request) {
   }
 
   try {
+    const stripe = getStripe()
     const event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET!)
 
     if (event.type === "checkout.session.completed") {
