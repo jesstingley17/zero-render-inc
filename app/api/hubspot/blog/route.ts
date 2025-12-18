@@ -244,25 +244,32 @@ function transformHubSpotPost(post: HubSpotBlogPost) {
                 post.blog_author ||
                 "ZeroRender Team"
 
-  // Extract author avatar/profile picture
+  // Extract author avatar/profile picture - check multiple field names and nested objects
   const authorAvatar = post.blogAuthorAvatar ||
                       post.blog_author_avatar ||
                       post.authorAvatar ||
                       post.author_avatar ||
                       post.authorImage ||
+                      (typeof post.blogAuthor === 'object' && post.blogAuthor?.avatar) ||
+                      (typeof post.blogAuthor === 'object' && post.blogAuthor?.image) ||
+                      (typeof post.author === 'object' && post.author?.avatar) ||
                       null
 
-  // Extract author bio
+  // Extract author bio - check multiple field names and nested objects
   const authorBio = post.blogAuthorBio ||
                    post.blog_author_bio ||
                    post.authorBio ||
                    post.author_bio ||
+                   (typeof post.blogAuthor === 'object' && post.blogAuthor?.bio) ||
+                   (typeof post.author === 'object' && post.author?.bio) ||
                    ""
 
-  // Extract author email/username for potential profile link
+  // Extract author email/username for potential profile link - check multiple field names and nested objects
   const authorEmail = post.blogAuthorEmail ||
                      post.blog_author_email ||
                      post.authorEmail ||
+                     (typeof post.blogAuthor === 'object' && post.blogAuthor?.email) ||
+                     (typeof post.author === 'object' && post.author?.email) ||
                      null
 
   return {
@@ -423,34 +430,61 @@ export async function GET(request: NextRequest) {
             post.author = fullAuthor
           }
 
-          // Update author avatar
+          // Update author avatar - check multiple possible field names and nested objects
           const fullAuthorAvatar = fullPost.blogAuthorAvatar ||
                                   fullPost.blog_author_avatar ||
                                   fullPost.authorAvatar ||
                                   fullPost.author_avatar ||
-                                  fullPost.authorImage
+                                  fullPost.authorImage ||
+                                  fullPost.blogAuthor?.avatar ||
+                                  fullPost.blogAuthor?.image ||
+                                  fullPost.author?.avatar ||
+                                  fullPost.author?.image ||
+                                  fullPost.blog_author?.avatar ||
+                                  (typeof fullPost.blogAuthor === 'object' && fullPost.blogAuthor?.avatar) ||
+                                  null
           
           if (fullAuthorAvatar && !post.authorAvatar) {
             post.authorAvatar = fullAuthorAvatar
           }
 
-          // Update author bio
+          // Update author bio - check multiple possible field names and nested objects
           const fullAuthorBio = fullPost.blogAuthorBio ||
                                fullPost.blog_author_bio ||
                                fullPost.authorBio ||
-                               fullPost.author_bio
+                               fullPost.author_bio ||
+                               fullPost.blogAuthor?.bio ||
+                               fullPost.author?.bio ||
+                               fullPost.blog_author?.bio ||
+                               (typeof fullPost.blogAuthor === 'object' && fullPost.blogAuthor?.bio) ||
+                               ""
           
           if (fullAuthorBio && !post.authorBio) {
             post.authorBio = fullAuthorBio
           }
 
-          // Update author email
+          // Update author email - check multiple possible field names and nested objects
           const fullAuthorEmail = fullPost.blogAuthorEmail ||
                                  fullPost.blog_author_email ||
-                                 fullPost.authorEmail
+                                 fullPost.authorEmail ||
+                                 fullPost.blogAuthor?.email ||
+                                 fullPost.author?.email ||
+                                 fullPost.blog_author?.email ||
+                                 (typeof fullPost.blogAuthor === 'object' && fullPost.blogAuthor?.email) ||
+                                 null
           
           if (fullAuthorEmail && !post.authorEmail) {
             post.authorEmail = fullAuthorEmail
+          }
+
+          // Debug logging to see what HubSpot actually returns
+          if (process.env.NODE_ENV !== 'production') {
+            console.log('Full post author data:', {
+              blogAuthor: fullPost.blogAuthor,
+              blogAuthorDisplayName: fullPost.blogAuthorDisplayName,
+              authorName: fullPost.authorName,
+              availableFields: Object.keys(fullPost).filter(k => k.toLowerCase().includes('author') || k.toLowerCase().includes('avatar') || k.toLowerCase().includes('bio'))
+            })
           }
           
           // Also update other fields that might be more complete in the full post
