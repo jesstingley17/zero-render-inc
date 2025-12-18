@@ -132,8 +132,21 @@ function transformHubSpotPost(post: HubSpotBlogPost) {
     slug = post.id.toString()
   }
 
+  // Normalize the slug to ensure consistency
+  const normalizeSlug = (s: string): string => {
+    return s
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/[^\w-]/g, '')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '')
+  }
+
+  const normalizedSlug = normalizeSlug(slug)
+
   return {
-    slug: slug,
+    slug: normalizedSlug,
     title: post.name || "Untitled",
     excerpt: post.postSummary || post.metaDescription || "",
     author: post.blogAuthorDisplayName || post.authorName || "ZeroRender Team",
@@ -160,33 +173,51 @@ export async function GET(request: NextRequest) {
     // If slug is provided, fetch a single post
     if (slug) {
       const posts = await fetchHubSpotBlogPosts()
-      // Decode the slug in case it's URL encoded
+      
+      // Normalize the search slug the same way we normalize in transformHubSpotPost
+      const normalizeSlug = (s: string): string => {
+        return decodeURIComponent(s)
+          .toLowerCase()
+          .trim()
+          .replace(/\s+/g, '-')
+          .replace(/[^\w-]/g, '')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '')
+      }
+      
+      const normalizedSearchSlug = normalizeSlug(slug)
       const decodedSlug = decodeURIComponent(slug).toLowerCase().trim()
       const searchSlug = slug.toLowerCase().trim()
       
       // Transform all posts first to get consistent slug format
       const transformedPosts = posts.map(transformHubSpotPost)
       
-      // Try multiple matching strategies
+      // Try multiple matching strategies - prioritize exact normalized match
       let post = transformedPosts.find((p) => {
         const pSlug = p.slug?.toLowerCase().trim()
         const pOriginalSlug = p.originalSlug?.toLowerCase().trim()
         const pOriginalId = p.originalId?.toLowerCase().trim()
         
         return (
+          // Exact normalized match (most reliable)
+          pSlug === normalizedSearchSlug ||
+          // Other exact matches
           pSlug === decodedSlug ||
           pSlug === searchSlug ||
+          pOriginalSlug === normalizedSearchSlug ||
           pOriginalSlug === decodedSlug ||
           pOriginalSlug === searchSlug ||
+          // ID match
           pOriginalId === slug ||
           pOriginalId === decodedSlug ||
           pOriginalId === searchSlug ||
-          // Try partial matches
-          pSlug?.includes(decodedSlug) ||
-          decodedSlug.includes(pSlug || '') ||
+          // Partial matches (less reliable but might help)
+          (pSlug && normalizedSearchSlug && pSlug.includes(normalizedSearchSlug)) ||
+          (pSlug && normalizedSearchSlug && normalizedSearchSlug.includes(pSlug)) ||
           // Try matching against URL
           p.originalUrl?.toLowerCase().includes(decodedSlug) ||
-          p.originalUrl?.toLowerCase().includes(searchSlug)
+          p.originalUrl?.toLowerCase().includes(searchSlug) ||
+          p.originalUrl?.toLowerCase().includes(normalizedSearchSlug)
         )
       })
 
