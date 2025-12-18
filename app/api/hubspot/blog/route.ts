@@ -26,19 +26,15 @@ interface HubSpotBlogPost {
 async function fetchHubSpotBlogPosts() {
   const apiKey = process.env.HUBSPOT_API_KEY
   const blogId = process.env.HUBSPOT_BLOG_ID
-  const blogDomain = process.env.HUBSPOT_BLOG_DOMAIN
 
   if (!apiKey) {
-    throw new Error("HUBSPOT_API_KEY is not configured")
-  }
-
-  if (!blogId && !blogDomain) {
-    throw new Error("HUBSPOT_BLOG_ID or HUBSPOT_BLOG_DOMAIN must be configured")
+    throw new Error("HUBSPOT_API_KEY is not configured. Please add it to your Vercel environment variables.")
   }
 
   try {
     // Fetch blog posts from HubSpot Content API v2
     // HubSpot Content API v2 is the standard for blog posts
+    // blogId is optional - if not provided, fetches from all blogs
     const url = blogId
       ? `https://api.hubapi.com/content/api/v2/blog-posts?blogId=${blogId}&state=PUBLISHED&limit=50`
       : `https://api.hubapi.com/content/api/v2/blog-posts?state=PUBLISHED&limit=50`
