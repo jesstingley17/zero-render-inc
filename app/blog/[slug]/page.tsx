@@ -40,6 +40,7 @@ export default function BlogPostPage() {
 
       try {
         setLoading(true)
+        // Use the slug as-is, the API will handle URL decoding
         const response = await fetch(`/api/hubspot/blog?slug=${encodeURIComponent(slug)}`)
         const data = await response.json()
 
@@ -50,10 +51,11 @@ export default function BlogPostPage() {
         if (data.post) {
           setPost(data.post)
         } else {
-          setError("Post not found")
+          setError(`Post not found: ${slug}`)
         }
       } catch (err) {
         console.error("Error fetching blog post:", err)
+        console.error("Slug used:", slug)
         setError(err instanceof Error ? err.message : "Failed to load blog post")
       } finally {
         setLoading(false)

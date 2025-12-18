@@ -91,9 +91,21 @@ export async function GET(request: NextRequest) {
     // If slug is provided, fetch a single post
     if (slug) {
       const posts = await fetchHubSpotBlogPosts()
-      const post = posts.find((p: HubSpotBlogPost) => p.slug === slug || p.id.toString() === slug)
+      // Decode the slug in case it's URL encoded
+      const decodedSlug = decodeURIComponent(slug)
+      
+      // Try to find the post by slug (exact match, case-insensitive, or by ID)
+      const post = posts.find(
+        (p: HubSpotBlogPost) =>
+          p.slug?.toLowerCase() === decodedSlug.toLowerCase() ||
+          p.slug?.toLowerCase() === slug.toLowerCase() ||
+          p.id.toString() === slug ||
+          p.id.toString() === decodedSlug
+      )
 
       if (!post) {
+        console.error(`Post not found for slug: ${slug} (decoded: ${decodedSlug})`)
+        console.error(`Available slugs: ${posts.map((p: HubSpotBlogPost) => p.slug).join(", ")}`)
         return NextResponse.json({ error: "Post not found" }, { status: 404 })
       }
 
