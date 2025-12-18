@@ -234,11 +234,21 @@ function transformHubSpotPost(post: HubSpotBlogPost) {
   const actualWordCount = postContent ? postContent.replace(/<[^>]*>/g, "").split(/\s+/).length : wordCount
   const actualReadTime = Math.ceil(actualWordCount / 200)
 
+  // Extract author from multiple possible fields
+  const author = post.blogAuthorDisplayName || 
+                post.blog_author_display_name ||
+                post.authorName || 
+                post.author_name ||
+                post.author ||
+                post.blogAuthor ||
+                post.blog_author ||
+                "ZeroRender Team"
+
   return {
     slug: normalizedSlug,
     title: post.name || "Untitled",
     excerpt: post.postSummary || post.metaDescription || "",
-    author: post.blogAuthorDisplayName || post.authorName || "ZeroRender Team",
+    author: author,
     date: new Date(post.publishDate || post.created).toISOString().split("T")[0],
     readTime: `${actualReadTime} min read`,
     category: "Blog", // You can map this from HubSpot topics/tags if needed
@@ -374,6 +384,19 @@ export async function GET(request: NextRequest) {
             post.content = postContent
           } else {
             console.warn(`No content found for post ${post.originalId}. Available fields:`, Object.keys(fullPost))
+          }
+          
+          // Update author from full post if available
+          const fullAuthor = fullPost.blogAuthorDisplayName || 
+                            fullPost.blog_author_display_name ||
+                            fullPost.authorName || 
+                            fullPost.author_name ||
+                            fullPost.author ||
+                            fullPost.blogAuthor ||
+                            fullPost.blog_author
+          
+          if (fullAuthor && fullAuthor !== "ZeroRender Team") {
+            post.author = fullAuthor
           }
           
           // Also update other fields that might be more complete in the full post
