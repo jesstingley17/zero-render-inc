@@ -220,15 +220,29 @@ function transformHubSpotPost(post: HubSpotBlogPost) {
     }
   }
 
+  // Get content from multiple possible field names
+  const postContent = post.postBody || 
+                     post.post_body || 
+                     post.body || 
+                     post.content ||
+                     post.html ||
+                     post.html_content ||
+                     post.post_html ||
+                     ""
+
+  // Recalculate read time from actual content
+  const actualWordCount = postContent ? postContent.replace(/<[^>]*>/g, "").split(/\s+/).length : wordCount
+  const actualReadTime = Math.ceil(actualWordCount / 200)
+
   return {
     slug: normalizedSlug,
     title: post.name || "Untitled",
     excerpt: post.postSummary || post.metaDescription || "",
     author: post.blogAuthorDisplayName || post.authorName || "ZeroRender Team",
     date: new Date(post.publishDate || post.created).toISOString().split("T")[0],
-    readTime: `${readTime} min read`,
+    readTime: `${actualReadTime} min read`,
     category: "Blog", // You can map this from HubSpot topics/tags if needed
-    content: post.postBody || "",
+    content: postContent,
     featuredImage: featuredImage,
     featuredImageAlt: post.featuredImageAltText || post.featured_image_alt || null,
     url: post.absoluteUrl || post.url || "",
