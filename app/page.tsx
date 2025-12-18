@@ -5,6 +5,90 @@ import { Menu, X, ArrowDown, Mail } from "lucide-react"
 import ContactForm from "@/components/contact-form"
 import JobApplicationSection from "@/components/job-application-section"
 
+function NewsletterForm() {
+  const [email, setEmail] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!email) {
+      setMessage({ type: "error", text: "Please enter your email address" })
+      return
+    }
+
+    setLoading(true)
+    setMessage(null)
+
+    try {
+      const response = await fetch("/api/newsletter-subscribe", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to subscribe")
+      }
+
+      setMessage({ type: "success", text: "Successfully subscribed! Check your email for confirmation." })
+      setEmail("")
+    } catch (error) {
+      console.error("Newsletter subscription error:", error)
+      setMessage({
+        type: "error",
+        text: error instanceof Error ? error.message : "Failed to subscribe. Please try again.",
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="max-w-2xl mx-auto">
+      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+        <div className="flex-1">
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email address"
+            required
+            className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/5 border border-white/10 text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-white transition-all duration-300 text-base sm:text-lg"
+          />
+        </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="px-6 sm:px-8 py-3 sm:py-4 bg-white text-black hover:bg-zinc-900 hover:text-white border border-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm sm:text-base uppercase tracking-wider whitespace-nowrap"
+        >
+          {loading ? "Subscribing..." : "Subscribe"}
+        </button>
+      </form>
+
+      {message && (
+        <div
+          className={`mt-4 sm:mt-6 p-4 rounded-md ${
+            message.type === "success"
+              ? "bg-green-500/20 border border-green-500/50 text-green-200"
+              : "bg-red-500/20 border border-red-500/50 text-red-200"
+          }`}
+        >
+          {message.text}
+        </div>
+      )}
+
+      <p className="text-xs sm:text-sm text-zinc-500 mt-4 sm:mt-6 text-center">
+        By subscribing, you agree to our Privacy Policy. Unsubscribe at any time.
+      </p>
+    </div>
+  )
+}
+
 export default function Page() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -541,6 +625,23 @@ export default function Page() {
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Newsletter Section */}
+      <section id="newsletter" className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 md:px-8 bg-zinc-950 border-t border-white/10">
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center mb-10 sm:mb-12 md:mb-16">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-4 sm:mb-5 md:mb-6">
+              Stay in the Loop
+            </h2>
+            <p className="text-base sm:text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+              Get the latest updates on AI-powered tools, design trends, and tips to grow your business. No spam, just
+              valuable insights.
+            </p>
+          </div>
+
+          <NewsletterForm />
         </div>
       </section>
 
