@@ -37,6 +37,7 @@ async function fetchHubSpotBlogPosts() {
     // Fetch blog posts from HubSpot Content API v2
     // HubSpot Content API v2 is the standard for blog posts
     // blogId is optional - if not provided, fetches from all blogs
+    // Include post_body in the fields to get the full content
     const url = blogId
       ? `https://api.hubapi.com/content/api/v2/blog-posts?blogId=${blogId}&state=PUBLISHED&limit=50`
       : `https://api.hubapi.com/content/api/v2/blog-posts?state=PUBLISHED&limit=50`
@@ -57,6 +58,37 @@ async function fetchHubSpotBlogPosts() {
     return data.objects || []
   } catch (error) {
     console.error("HubSpot API error:", error)
+    throw error
+  }
+}
+
+// Helper function to fetch a single blog post by ID to get full content
+async function fetchHubSpotBlogPostById(postId: string) {
+  const apiKey = process.env.HUBSPOT_API_KEY
+
+  if (!apiKey) {
+    throw new Error("HUBSPOT_API_KEY is not configured")
+  }
+
+  try {
+    const response = await fetch(
+      `https://api.hubapi.com/content/api/v2/blog-posts/${postId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+      }
+    )
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HubSpot API error: ${response.status} - ${errorText}`)
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error("HubSpot API error fetching post:", error)
     throw error
   }
 }
@@ -292,6 +324,19 @@ export async function GET(request: NextRequest) {
             totalPosts: transformedPosts.length
           }
         }, { status: 404 })
+      }
+
+      // If post body is empty or missing, fetch the full post by ID to get complete content
+      if (!post.content || post.content.trim() === '') {
+        try {
+          const fullPost = await fetchHubSpotBlogPostById(post.originalId)
+          if (fullPost && fullPost.postBody) {
+            post.content = fullPost.postBody
+          }
+        } catch (error) {
+          console.error("Failed to fetch full post content:", error)
+          // Continue with existing content (even if empty)
+        }
       }
 
       // Remove debug fields before returning
