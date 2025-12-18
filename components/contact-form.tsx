@@ -10,6 +10,7 @@ interface ContactFormProps {
 
 export default function ContactForm({ open, onOpenChange, packageTitle }: ContactFormProps) {
   const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -32,6 +33,14 @@ export default function ContactForm({ open, onOpenChange, packageTitle }: Contac
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setLoading(true)
+    setMessage(null)
+
+    // Validate service interest
+    if (formData.serviceInterest.length === 0) {
+      setMessage({ type: "error", text: "Please select at least one service you're interested in." })
+      setLoading(false)
+      return
+    }
 
     const formattedMessage = `
 Full Name: ${formData.fullName}
@@ -79,9 +88,12 @@ ${formData.additionalInfo || "N/A"}
         ;(window as any).gtag_report_conversion()
       }
 
-      alert("Inquiry sent successfully! We'll be in touch soon.")
-      onOpenChange(false)
-      setFormData({
+      setMessage({ type: "success", text: "Inquiry sent successfully! We'll be in touch soon." })
+      
+      // Reset form and close after a delay
+      setTimeout(() => {
+        onOpenChange(false)
+        setFormData({
         fullName: "",
         email: "",
         phone: "",
@@ -96,10 +108,15 @@ ${formData.additionalInfo || "N/A"}
         budget: "",
         source: "",
         additionalInfo: "",
-      })
+        })
+        setMessage(null)
+      }, 2000)
     } catch (error) {
-      console.error("[v0] Contact form error:", error)
-      alert(`Failed to send inquiry: ${error instanceof Error ? error.message : "Please try again."}`)
+      console.error("Contact form error:", error)
+      setMessage({
+        type: "error",
+        text: `Failed to send inquiry: ${error instanceof Error ? error.message : "Please try again."}`,
+      })
     } finally {
       setLoading(false)
     }
@@ -127,6 +144,20 @@ ${formData.additionalInfo || "N/A"}
             Tell us about your project so we can create something amazing together.
           </p>
         </div>
+
+        {message && (
+          <div className="mx-6 mt-4 p-4 rounded-md">
+            <div
+              className={`p-3 rounded-md ${
+                message.type === "success"
+                  ? "bg-green-500/20 border border-green-500/50 text-green-200"
+                  : "bg-red-500/20 border border-red-500/50 text-red-200"
+              }`}
+            >
+              {message.text}
+            </div>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="overflow-y-auto px-6 py-6 space-y-6">
           <div>
@@ -178,7 +209,11 @@ ${formData.additionalInfo || "N/A"}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-200 mb-3">Services Interested In *</label>
+            <label className="block text-sm font-medium text-zinc-200 mb-3">
+              Services Interested In * {formData.serviceInterest.length === 0 && (
+                <span className="text-red-400 text-xs ml-2">(Please select at least one)</span>
+              )}
+            </label>
             <div className="space-y-2">
               {[
                 "Starter Website",
