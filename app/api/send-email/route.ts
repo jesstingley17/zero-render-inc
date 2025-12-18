@@ -27,12 +27,26 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid email format" }, { status: 400 })
     }
 
+    // Sanitize email and message to prevent XSS
+    const sanitizeHtml = (str: string) => {
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;")
+    }
+
+    const sanitizedEmail = sanitizeHtml(email)
+    const sanitizedMessage = sanitizeHtml(message)
+    const sanitizedPackageTitle = packageTitle ? sanitizeHtml(packageTitle) : "General Inquiry"
+
     const resend = getResend()
     const { data, error } = await resend.emails.send({
       from: "ZeroRender <hello@zero-render.com>",
       to: ["jtingley@zero-render.com", "tplymale@zero-render.com", "kara@zero-render.com"],
       replyTo: email,
-      subject: `New ${type === "inquiry" ? "Inquiry" : "Contact"}: ${packageTitle || "General"}`,
+      subject: `New ${type === "inquiry" ? "Inquiry" : "Contact"}: ${sanitizedPackageTitle}`,
       text: `From: ${email}\n\n${message}`,
       html: `
         <!DOCTYPE html>
@@ -44,19 +58,23 @@ export async function POST(request: NextRequest) {
         <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
           <div style="background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
             <h2 style="color: #000; margin-top: 0;">New Contact Form Submission</h2>
-            <p style="color: #333;"><strong>From:</strong> ${email}</p>
-            <p style="color: #333;"><strong>Package/Service:</strong> ${packageTitle || "General Inquiry"}</p>
+            <p style="color: #333;"><strong>From:</strong> ${sanitizedEmail}</p>
+            <p style="color: #333;"><strong>Package/Service:</strong> ${sanitizedPackageTitle}</p>
             <hr style="border: 1px solid #eee; margin: 20px 0;">
-            <div style="white-space: pre-wrap; line-height: 1.6; color: #333;">${message.replace(/\n/g, "<br>")}</div>
+            <div style="white-space: pre-wrap; line-height: 1.6; color: #333;">${sanitizedMessage.replace(/\n/g, "<br>")}</div>
           </div>
         </body>
         </html>
       `,
+      tags: [{ name: "type", value: type || "contact" }],
     })
 
     if (error) {
       console.error("Resend error:", error)
-      return NextResponse.json({ error: "Failed to send email" }, { status: 500 })
+      return NextResponse.json(
+        { error: error.message || "Failed to send email", details: error },
+        { status: 500 }
+      )
     }
 
     return NextResponse.json({ success: true, data })

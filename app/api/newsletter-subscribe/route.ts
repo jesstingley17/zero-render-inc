@@ -27,6 +27,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid email format" }, { status: 400 })
     }
 
+    // Sanitize email to prevent XSS
+    const sanitizeHtml = (str: string) => {
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;")
+    }
+
+    const sanitizedEmail = sanitizeHtml(email)
+
     // Send notification to founders about new newsletter subscriber
     const resend = getResend()
     const { data, error } = await resend.emails.send({
@@ -43,17 +55,21 @@ export async function POST(request: NextRequest) {
         <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
           <div style="background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
             <h2 style="color: #000; margin-top: 0;">New Newsletter Subscriber</h2>
-            <p style="color: #333;"><strong>Email:</strong> ${email}</p>
+            <p style="color: #333;"><strong>Email:</strong> ${sanitizedEmail}</p>
             <p style="color: #333;"><strong>Subscribed at:</strong> ${new Date().toLocaleString()}</p>
           </div>
         </body>
         </html>
       `,
+      tags: [{ name: "type", value: "newsletter" }],
     })
 
     if (error) {
       console.error("Resend error:", error)
-      return NextResponse.json({ error: "Failed to subscribe" }, { status: 500 })
+      return NextResponse.json(
+        { error: error.message || "Failed to subscribe", details: error },
+        { status: 500 }
+      )
     }
 
     return NextResponse.json({ success: true, data })
