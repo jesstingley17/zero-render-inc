@@ -18,6 +18,24 @@ export const metadata: Metadata = {
     icon: "/logo_bw_inverted.png",
     apple: "/logo_bw_inverted.png",
   },
+  openGraph: {
+    title: "ZeroRender - AI-Powered Digital Experiences for Small Business",
+    description:
+      "ZeroRender, Inc. is a design-tech startup building modern, AI-powered digital experiences for small businesses. We create fast, accessible websites, automated workflows, and sleek brand identities that help founders launch and scale with confidence.",
+    url: "https://www.zero-render.com",
+    siteName: "ZeroRender",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ZeroRender - AI-Powered Digital Experiences for Small Business",
+    description:
+      "ZeroRender, Inc. is a design-tech startup building modern, AI-powered digital experiences for small businesses. We create fast, accessible websites, automated workflows, and sleek brand identities that help founders launch and scale with confidence.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 }
 
 export default function RootLayout({
