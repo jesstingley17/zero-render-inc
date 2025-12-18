@@ -61,14 +61,44 @@ async function fetchHubSpotBlogPosts() {
   }
 }
 
+// Extract slug from HubSpot URL or use provided slug
+function extractSlugFromHubSpotPost(post: HubSpotBlogPost): string {
+  // First, try the slug field
+  if (post.slug) {
+    return post.slug
+  }
+  
+  // Try to extract from absoluteUrl or url
+  if (post.absoluteUrl) {
+    const urlParts = post.absoluteUrl.split("/")
+    const slug = urlParts[urlParts.length - 1] || urlParts[urlParts.length - 2]
+    if (slug && slug !== "blog" && !slug.includes(".")) {
+      return slug
+    }
+  }
+  
+  if (post.url) {
+    const urlParts = post.url.split("/")
+    const slug = urlParts[urlParts.length - 1] || urlParts[urlParts.length - 2]
+    if (slug && slug !== "blog" && !slug.includes(".")) {
+      return slug
+    }
+  }
+  
+  // Fallback to ID
+  return post.id.toString()
+}
+
 // Transform HubSpot post to our format
 function transformHubSpotPost(post: HubSpotBlogPost) {
   // Calculate read time (approximately 200 words per minute)
   const wordCount = post.postBody?.replace(/<[^>]*>/g, "").split(/\s+/).length || 0
   const readTime = Math.ceil(wordCount / 200)
 
+  const slug = extractSlugFromHubSpotPost(post)
+
   return {
-    slug: post.slug || post.id.toString(),
+    slug: slug,
     title: post.name || "Untitled",
     excerpt: post.postSummary || post.metaDescription || "",
     author: post.blogAuthorDisplayName || post.authorName || "ZeroRender Team",
@@ -79,6 +109,9 @@ function transformHubSpotPost(post: HubSpotBlogPost) {
     featuredImage: post.featuredImage || null,
     url: post.absoluteUrl || post.url || "",
     metaDescription: post.metaDescription || "",
+    // Store original data for matching
+    originalSlug: post.slug,
+    originalId: post.id.toString(),
   }
 }
 
@@ -92,24 +125,55 @@ export async function GET(request: NextRequest) {
     if (slug) {
       const posts = await fetchHubSpotBlogPosts()
       // Decode the slug in case it's URL encoded
-      const decodedSlug = decodeURIComponent(slug)
+      const decodedSlug = decodeURIComponent(slug).toLowerCase().trim()
       
-      // Try to find the post by slug (exact match, case-insensitive, or by ID)
-      const post = posts.find(
-        (p: HubSpotBlogPost) =>
-          p.slug?.toLowerCase() === decodedSlug.toLowerCase() ||
+      // Transform all posts first to get consistent slug format
+      const transformedPosts = posts.map(transformHubSpotPost)
+      
+      // Try to find the post by transformed slug
+      let post = transformedPosts.find(
+        (p) =>
+          p.slug?.toLowerCase() === decodedSlug ||
           p.slug?.toLowerCase() === slug.toLowerCase() ||
-          p.id.toString() === slug ||
-          p.id.toString() === decodedSlug
+          p.originalSlug?.toLowerCase() === decodedSlug ||
+          p.originalId === slug ||
+          p.originalId === decodedSlug
       )
 
+      // If not found by transformed slug, try original HubSpot data
       if (!post) {
-        console.error(`Post not found for slug: ${slug} (decoded: ${decodedSlug})`)
-        console.error(`Available slugs: ${posts.map((p: HubSpotBlogPost) => p.slug).join(", ")}`)
-        return NextResponse.json({ error: "Post not found" }, { status: 404 })
+        const originalPost = posts.find(
+          (p: HubSpotBlogPost) =>
+            p.slug?.toLowerCase() === decodedSlug ||
+            p.slug?.toLowerCase() === slug.toLowerCase() ||
+            p.id.toString() === slug ||
+            p.id.toString() === decodedSlug ||
+            p.absoluteUrl?.toLowerCase().includes(decodedSlug) ||
+            p.url?.toLowerCase().includes(decodedSlug)
+        )
+        
+        if (originalPost) {
+          post = transformHubSpotPost(originalPost)
+        }
       }
 
-      return NextResponse.json({ post: transformHubSpotPost(post) })
+      if (!post) {
+        const availableSlugs = transformedPosts.map((p) => p.slug).join(", ")
+        console.error(`Post not found for slug: ${slug} (decoded: ${decodedSlug})`)
+        console.error(`Available slugs: ${availableSlugs}`)
+        return NextResponse.json({ 
+          error: "Post not found",
+          debug: {
+            searchedSlug: slug,
+            decodedSlug: decodedSlug,
+            availableSlugs: availableSlugs.split(", ").slice(0, 5) // First 5 for debugging
+          }
+        }, { status: 404 })
+      }
+
+      // Remove debug fields before returning
+      const { originalSlug, originalId, ...postData } = post as any
+      return NextResponse.json({ post: postData })
     }
 
     // Otherwise, fetch all posts
@@ -119,7 +183,10 @@ export async function GET(request: NextRequest) {
     // Sort by publish date (newest first)
     transformedPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
-    return NextResponse.json({ posts: transformedPosts })
+    // Remove debug fields before returning
+    const cleanedPosts = transformedPosts.map(({ originalSlug, originalId, ...post }) => post)
+
+    return NextResponse.json({ posts: cleanedPosts })
   } catch (error) {
     console.error("Blog API error:", error)
     return NextResponse.json(
