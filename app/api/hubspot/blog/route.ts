@@ -326,17 +326,26 @@ export async function GET(request: NextRequest) {
         }, { status: 404 })
       }
 
-      // If post body is empty or missing, fetch the full post by ID to get complete content
-      if (!post.content || post.content.trim() === '') {
-        try {
-          const fullPost = await fetchHubSpotBlogPostById(post.originalId)
-          if (fullPost && fullPost.postBody) {
+      // Always fetch the full post by ID to ensure we have complete content
+      // HubSpot's listing API may not return the full postBody
+      try {
+        const fullPost = await fetchHubSpotBlogPostById(post.originalId)
+        if (fullPost) {
+          // Update content with full post body if available
+          if (fullPost.postBody) {
             post.content = fullPost.postBody
           }
-        } catch (error) {
-          console.error("Failed to fetch full post content:", error)
-          // Continue with existing content (even if empty)
+          // Also update other fields that might be more complete in the full post
+          if (fullPost.featuredImage && !post.featuredImage) {
+            post.featuredImage = fullPost.featuredImage
+          }
+          if (fullPost.metaDescription && !post.metaDescription) {
+            post.metaDescription = fullPost.metaDescription
+          }
         }
+      } catch (error) {
+        console.error("Failed to fetch full post content:", error)
+        // Continue with existing content from listing
       }
 
       // Remove debug fields before returning
