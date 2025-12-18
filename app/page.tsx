@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Menu, X, ArrowDown, Mail } from "lucide-react"
+import Link from "next/link"
 import ContactForm from "@/components/contact-form"
 import JobApplicationSection from "@/components/job-application-section"
 
@@ -123,6 +124,12 @@ export default function Page() {
                 {item}
               </a>
             ))}
+            <a
+              href="/blog"
+              className="text-xs lg:text-sm uppercase tracking-widest text-white/70 hover:text-white transition-colors duration-300"
+            >
+              Blog
+            </a>
             <button
               onClick={() => setIsContactOpen(true)}
               className="bg-white text-black hover:bg-zinc-900 hover:text-white rounded-none uppercase tracking-wider text-sm px-4 py-2 transition-colors"
@@ -153,6 +160,13 @@ export default function Page() {
                   {item}
                 </a>
               ))}
+              <a
+                href="/blog"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-lg uppercase tracking-widest text-white/70 hover:text-white py-3 transition-colors touch-manipulation"
+              >
+                Blog
+              </a>
               <button
                 onClick={() => {
                   setIsContactOpen(true)
@@ -718,6 +732,14 @@ export default function Page() {
                     </a>
                   </li>
                 ))}
+                <li>
+                  <a
+                    href="/blog"
+                    className="hover:text-white transition-colors touch-manipulation inline-block py-1"
+                  >
+                    Blog
+                  </a>
+                </li>
                 <li>
                   <a
                     href="/privacy-policy"
