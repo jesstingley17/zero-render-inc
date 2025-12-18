@@ -96,7 +96,7 @@ export default function PrivacyPolicyPage() {
             Privacy Policy
           </h1>
           <p className="text-sm sm:text-base text-zinc-400 mb-12 sm:mb-14 md:mb-16">
-            Last updated: {new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+            Last updated: December 18, 2024
           </p>
 
           {/* Content */}
