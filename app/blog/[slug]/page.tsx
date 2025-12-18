@@ -5,170 +5,18 @@ import { Menu, X, ArrowLeft, Calendar, Clock, Share2 } from "lucide-react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 
-// Blog post content - in production, this would come from a CMS or database
-const blogPosts: Record<
-  string,
-  {
-    title: string
-    content: string
-    author: string
-    date: string
-    readTime: string
-    category: string
-    excerpt: string
-  }
-> = {
-  "getting-started-with-ai-powered-websites": {
-    title: "Getting Started with AI-Powered Websites",
-    excerpt:
-      "Discover how AI can transform your business website, from automated customer service to personalized user experiences.",
-    author: "ZeroRender Team",
-    date: "2024-12-15",
-    readTime: "5 min read",
-    category: "AI & Technology",
-    content: `
-      <p class="text-lg text-zinc-300 leading-relaxed mb-6">
-        Artificial Intelligence is revolutionizing how businesses interact with their customers online. 
-        From chatbots that provide instant customer support to personalized content recommendations, 
-        AI-powered websites are becoming the standard for modern businesses.
-      </p>
-      
-      <h2 class="text-3xl font-bold tracking-tighter mt-8 mb-4">Why AI-Powered Websites Matter</h2>
-      <p class="text-base text-zinc-300 leading-relaxed mb-4">
-        AI-powered websites offer numerous benefits for small businesses:
-      </p>
-      <ul class="list-disc list-inside space-y-2 text-base text-zinc-300 mb-6 ml-4">
-        <li>24/7 customer support through intelligent chatbots</li>
-        <li>Personalized user experiences based on visitor behavior</li>
-        <li>Automated lead qualification and routing</li>
-        <li>Improved conversion rates through smart recommendations</li>
-        <li>Reduced operational costs while maintaining quality service</li>
-      </ul>
-      
-      <h2 class="text-3xl font-bold tracking-tighter mt-8 mb-4">Getting Started</h2>
-      <p class="text-base text-zinc-300 leading-relaxed mb-4">
-        Implementing AI on your website doesn't have to be complicated. Start with these key features:
-      </p>
-      <ol class="list-decimal list-inside space-y-2 text-base text-zinc-300 mb-6 ml-4">
-        <li><strong>Chatbot Integration:</strong> Add an AI chatbot to handle common customer inquiries</li>
-        <li><strong>Smart Forms:</strong> Use AI to automatically categorize and route form submissions</li>
-        <li><strong>Content Personalization:</strong> Show relevant content based on user preferences</li>
-        <li><strong>Analytics & Insights:</strong> Leverage AI to understand user behavior patterns</li>
-      </ol>
-      
-      <h2 class="text-3xl font-bold tracking-tighter mt-8 mb-4">The Future is AI</h2>
-      <p class="text-base text-zinc-300 leading-relaxed mb-6">
-        As AI technology continues to evolve, businesses that embrace these tools early will have a 
-        significant competitive advantage. The key is to start simple and gradually expand your AI 
-        capabilities as your business grows.
-      </p>
-      
-      <p class="text-base text-zinc-300 leading-relaxed">
-        Ready to transform your website with AI? <a href="/#contact" class="text-white underline hover:text-zinc-300">Contact us</a> to learn how ZeroRender can help you get started.
-      </p>
-    `,
-  },
-  "design-trends-2024": {
-    title: "Design Trends That Will Shape 2024",
-    excerpt: "Explore the latest design trends that are revolutionizing web design and how they can benefit your business.",
-    author: "ZeroRender Team",
-    date: "2024-12-10",
-    readTime: "7 min read",
-    category: "Design",
-    content: `
-      <p class="text-lg text-zinc-300 leading-relaxed mb-6">
-        Web design is constantly evolving, and 2024 brings exciting new trends that blend aesthetics 
-        with functionality. Here's what's shaping the future of digital design.
-      </p>
-      
-      <h2 class="text-3xl font-bold tracking-tighter mt-8 mb-4">Minimalism Meets Bold Typography</h2>
-      <p class="text-base text-zinc-300 leading-relaxed mb-6">
-        Clean, minimal designs paired with bold, expressive typography create powerful visual statements 
-        that capture attention while maintaining readability.
-      </p>
-      
-      <h2 class="text-3xl font-bold tracking-tighter mt-8 mb-4">Dark Mode as Standard</h2>
-      <p class="text-base text-zinc-300 leading-relaxed mb-6">
-        Dark mode is no longer optional. Modern websites are designed with dark themes in mind, 
-        providing better user experience and reducing eye strain.
-      </p>
-      
-      <h2 class="text-3xl font-bold tracking-tighter mt-8 mb-4">Micro-Interactions</h2>
-      <p class="text-base text-zinc-300 leading-relaxed mb-6">
-        Subtle animations and micro-interactions enhance user engagement and provide valuable 
-        feedback, making websites feel more responsive and polished.
-      </p>
-    `,
-  },
-  "small-business-seo-guide": {
-    title: "The Complete Small Business SEO Guide",
-    excerpt: "Learn essential SEO strategies to help your small business get found online and attract more customers.",
-    author: "ZeroRender Team",
-    date: "2024-12-05",
-    readTime: "10 min read",
-    category: "Marketing",
-    content: `
-      <p class="text-lg text-zinc-300 leading-relaxed mb-6">
-        Search Engine Optimization (SEO) is crucial for small businesses looking to compete online. 
-        This comprehensive guide covers everything you need to know to improve your search rankings.
-      </p>
-      
-      <h2 class="text-3xl font-bold tracking-tighter mt-8 mb-4">Understanding SEO Basics</h2>
-      <p class="text-base text-zinc-300 leading-relaxed mb-6">
-        SEO helps your website appear in search results when potential customers search for products 
-        or services you offer. The better your SEO, the higher you'll rank, and the more traffic you'll receive.
-      </p>
-      
-      <h2 class="text-3xl font-bold tracking-tighter mt-8 mb-4">Key SEO Strategies</h2>
-      <ul class="list-disc list-inside space-y-2 text-base text-zinc-300 mb-6 ml-4">
-        <li>Optimize your website's loading speed</li>
-        <li>Create high-quality, relevant content</li>
-        <li>Use proper heading structure (H1, H2, H3)</li>
-        <li>Optimize images with alt text</li>
-        <li>Build quality backlinks</li>
-        <li>Ensure mobile responsiveness</li>
-      </ul>
-      
-      <h2 class="text-3xl font-bold tracking-tighter mt-8 mb-4">Local SEO for Small Businesses</h2>
-      <p class="text-base text-zinc-300 leading-relaxed mb-6">
-        For local businesses, local SEO is essential. Make sure your business is listed on Google 
-        Business Profile and other local directories. Include your location in your content and 
-        encourage customer reviews.
-      </p>
-    `,
-  },
-  "building-brand-identity": {
-    title: "Building a Strong Brand Identity on a Budget",
-    excerpt: "Practical tips for creating a memorable brand identity without breaking the bank, perfect for startups and small businesses.",
-    author: "ZeroRender Team",
-    date: "2024-11-28",
-    readTime: "6 min read",
-    category: "Branding",
-    content: `
-      <p class="text-lg text-zinc-300 leading-relaxed mb-6">
-        A strong brand identity doesn't require a massive budget. With the right approach, you can 
-        create a memorable brand that resonates with your audience without overspending.
-      </p>
-      
-      <h2 class="text-3xl font-bold tracking-tighter mt-8 mb-4">Define Your Brand Values</h2>
-      <p class="text-base text-zinc-300 leading-relaxed mb-6">
-        Start by clearly defining what your brand stands for. What values drive your business? 
-        What makes you different? These core principles will guide all your branding decisions.
-      </p>
-      
-      <h2 class="text-3xl font-bold tracking-tighter mt-8 mb-4">Consistent Visual Identity</h2>
-      <p class="text-base text-zinc-300 leading-relaxed mb-6">
-        Consistency is key. Choose a color palette, typography, and visual style that reflects 
-        your brand, and use them consistently across all touchpoints.
-      </p>
-      
-      <h2 class="text-3xl font-bold tracking-tighter mt-8 mb-4">Tell Your Story</h2>
-      <p class="text-base text-zinc-300 leading-relaxed mb-6">
-        People connect with stories. Share your journey, your mission, and what drives you. 
-        Authentic storytelling builds emotional connections with your audience.
-      </p>
-    `,
-  },
+interface BlogPost {
+  slug: string
+  title: string
+  content: string
+  author: string
+  date: string
+  readTime: string
+  category: string
+  excerpt: string
+  featuredImage?: string | null
+  url?: string
+  metaDescription?: string
 }
 
 export default function BlogPostPage() {
@@ -176,6 +24,9 @@ export default function BlogPostPage() {
   const slug = params?.slug as string
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [post, setPost] = useState<BlogPost | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50)
@@ -183,13 +34,51 @@ export default function BlogPostPage() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  const post = blogPosts[slug]
+  useEffect(() => {
+    async function fetchPost() {
+      if (!slug) return
 
-  if (!post) {
+      try {
+        setLoading(true)
+        const response = await fetch(`/api/hubspot/blog?slug=${encodeURIComponent(slug)}`)
+        const data = await response.json()
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to fetch blog post")
+        }
+
+        if (data.post) {
+          setPost(data.post)
+        } else {
+          setError("Post not found")
+        }
+      } catch (err) {
+        console.error("Error fetching blog post:", err)
+        setError(err instanceof Error ? err.message : "Failed to load blog post")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchPost()
+  }, [slug])
+
+  if (loading) {
+    return (
+      <main className="bg-black text-white min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-lg text-zinc-400">Loading post...</p>
+        </div>
+      </main>
+    )
+  }
+
+  if (error || !post) {
     return (
       <main className="bg-black text-white min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-4">Post Not Found</h1>
+          <p className="text-zinc-400 mb-4">{error || "The blog post you're looking for doesn't exist."}</p>
           <Link href="/blog" className="text-white/70 hover:text-white underline">
             Back to Blog
           </Link>
@@ -337,9 +226,20 @@ export default function BlogPostPage() {
             </div>
           </div>
 
+          {/* Featured Image */}
+          {post.featuredImage && (
+            <div className="mb-8 sm:mb-10 md:mb-12">
+              <img
+                src={post.featuredImage}
+                alt={post.title}
+                className="w-full h-auto rounded-md"
+              />
+            </div>
+          )}
+
           {/* Post Content */}
           <div
-            className="prose prose-invert max-w-none"
+            className="prose prose-invert max-w-none blog-content"
             dangerouslySetInnerHTML={{ __html: post.content }}
             style={{
               color: "#e4e4e7",

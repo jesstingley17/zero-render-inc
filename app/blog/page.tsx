@@ -4,58 +4,53 @@ import { useState, useEffect } from "react"
 import { Menu, X, ArrowLeft, Calendar, Clock } from "lucide-react"
 import Link from "next/link"
 
-// Sample blog posts - in production, this would come from a CMS or database
-const blogPosts = [
-  {
-    slug: "getting-started-with-ai-powered-websites",
-    title: "Getting Started with AI-Powered Websites",
-    excerpt:
-      "Discover how AI can transform your business website, from automated customer service to personalized user experiences.",
-    author: "ZeroRender Team",
-    date: "2024-12-15",
-    readTime: "5 min read",
-    category: "AI & Technology",
-  },
-  {
-    slug: "design-trends-2024",
-    title: "Design Trends That Will Shape 2024",
-    excerpt:
-      "Explore the latest design trends that are revolutionizing web design and how they can benefit your business.",
-    author: "ZeroRender Team",
-    date: "2024-12-10",
-    readTime: "7 min read",
-    category: "Design",
-  },
-  {
-    slug: "small-business-seo-guide",
-    title: "The Complete Small Business SEO Guide",
-    excerpt:
-      "Learn essential SEO strategies to help your small business get found online and attract more customers.",
-    author: "ZeroRender Team",
-    date: "2024-12-05",
-    readTime: "10 min read",
-    category: "Marketing",
-  },
-  {
-    slug: "building-brand-identity",
-    title: "Building a Strong Brand Identity on a Budget",
-    excerpt:
-      "Practical tips for creating a memorable brand identity without breaking the bank, perfect for startups and small businesses.",
-    author: "ZeroRender Team",
-    date: "2024-11-28",
-    readTime: "6 min read",
-    category: "Branding",
-  },
-]
+interface BlogPost {
+  slug: string
+  title: string
+  excerpt: string
+  author: string
+  date: string
+  readTime: string
+  category: string
+  featuredImage?: string | null
+}
 
 export default function BlogPage() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50)
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
+
+  useEffect(() => {
+    async function fetchPosts() {
+      try {
+        setLoading(true)
+        const response = await fetch("/api/hubspot/blog")
+        const data = await response.json()
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to fetch blog posts")
+        }
+
+        setBlogPosts(data.posts || [])
+      } catch (err) {
+        console.error("Error fetching blog posts:", err)
+        setError(err instanceof Error ? err.message : "Failed to load blog posts")
+        // Keep empty array so page still renders
+        setBlogPosts([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchPosts()
   }, [])
 
   return (
@@ -156,39 +151,73 @@ export default function BlogPage() {
             Insights, tips, and updates on AI-powered web design, digital marketing, and growing your business online.
           </p>
 
+          {/* Loading State */}
+          {loading && (
+            <div className="text-center py-16 sm:py-20 md:py-24">
+              <p className="text-lg sm:text-xl text-zinc-400">Loading blog posts...</p>
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && !loading && (
+            <div className="text-center py-16 sm:py-20 md:py-24">
+              <p className="text-lg sm:text-xl text-red-400 mb-4">{error}</p>
+              <p className="text-sm text-zinc-500">
+                Make sure HUBSPOT_API_KEY and HUBSPOT_BLOG_ID are configured in your environment variables.
+              </p>
+            </div>
+          )}
+
           {/* Blog Posts Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
-            {blogPosts.map((post) => (
-              <Link
-                key={post.slug}
-                href={`/blog/${post.slug}`}
-                className="group border border-white/10 p-6 sm:p-8 hover:bg-white/5 transition-all duration-300 flex flex-col"
-              >
-                <div className="mb-4">
-                  <span className="text-xs uppercase tracking-widest text-zinc-500">{post.category}</span>
-                </div>
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tighter mb-3 sm:mb-4 group-hover:text-white transition-colors">
-                  {post.title}
-                </h2>
-                <p className="text-sm sm:text-base text-zinc-400 mb-4 sm:mb-6 leading-relaxed flex-grow">
-                  {post.excerpt}
-                </p>
-                <div className="flex items-center gap-4 text-xs sm:text-sm text-zinc-500 pt-4 border-t border-white/10">
-                  <div className="flex items-center gap-1.5">
-                    <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span>{new Date(post.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+          {!loading && !error && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
+              {blogPosts.map((post) => (
+                <Link
+                  key={post.slug}
+                  href={`/blog/${post.slug}`}
+                  className="group border border-white/10 p-6 sm:p-8 hover:bg-white/5 transition-all duration-300 flex flex-col"
+                >
+                  {post.featuredImage && (
+                    <div className="mb-4 aspect-video overflow-hidden">
+                      <img
+                        src={post.featuredImage}
+                        alt={post.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                  )}
+                  <div className="mb-4">
+                    <span className="text-xs uppercase tracking-widest text-zinc-500">{post.category}</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span>{post.readTime}</span>
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tighter mb-3 sm:mb-4 group-hover:text-white transition-colors">
+                    {post.title}
+                  </h2>
+                  <p className="text-sm sm:text-base text-zinc-400 mb-4 sm:mb-6 leading-relaxed flex-grow">
+                    {post.excerpt || "Read more..."}
+                  </p>
+                  <div className="flex items-center gap-4 text-xs sm:text-sm text-zinc-500 pt-4 border-t border-white/10">
+                    <div className="flex items-center gap-1.5">
+                      <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <span>
+                        {new Date(post.date).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <span>{post.readTime}</span>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+                </Link>
+              ))}
+            </div>
+          )}
 
           {/* Empty State (if no posts) */}
-          {blogPosts.length === 0 && (
+          {!loading && !error && blogPosts.length === 0 && (
             <div className="text-center py-16 sm:py-20 md:py-24">
               <p className="text-lg sm:text-xl text-zinc-400">No blog posts yet. Check back soon!</p>
             </div>
