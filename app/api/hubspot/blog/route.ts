@@ -348,10 +348,20 @@ export async function GET(request: NextRequest) {
       try {
         const fullPost = await fetchHubSpotBlogPostById(post.originalId)
         if (fullPost) {
-          // Update content with full post body if available
-          if (fullPost.postBody) {
-            post.content = fullPost.postBody
+          // Update content with full post body - check multiple possible field names
+          const postContent = fullPost.postBody || 
+                             fullPost.post_body || 
+                             fullPost.body || 
+                             fullPost.content ||
+                             fullPost.html ||
+                             fullPost.html_content
+          
+          if (postContent) {
+            post.content = postContent
+          } else {
+            console.warn(`No content found for post ${post.originalId}. Available fields:`, Object.keys(fullPost))
           }
+          
           // Also update other fields that might be more complete in the full post
           const fullFeaturedImage = fullPost.featuredImage || 
                                    fullPost.featured_image || 
@@ -368,15 +378,18 @@ export async function GET(request: NextRequest) {
           }
           
           // If still no featured image, extract from post body
-          if (!post.featuredImage && fullPost.postBody) {
-            const imgMatch = fullPost.postBody.match(/<img[^>]+src=["']([^"']+)["'][^>]*>/i)
+          if (!post.featuredImage && postContent) {
+            const imgMatch = postContent.match(/<img[^>]+src=["']([^"']+)["'][^>]*>/i)
             if (imgMatch && imgMatch[1]) {
               post.featuredImage = imgMatch[1]
             }
           }
+        } else {
+          console.warn(`Full post fetch returned no data for ID: ${post.originalId}`)
         }
       } catch (error) {
         console.error("Failed to fetch full post content:", error)
+        console.error("Post ID:", post.originalId)
         // Continue with existing content from listing
       }
 
