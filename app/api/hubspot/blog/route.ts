@@ -63,25 +63,52 @@ async function fetchHubSpotBlogPosts() {
 
 // Extract slug from HubSpot URL or use provided slug
 function extractSlugFromHubSpotPost(post: HubSpotBlogPost): string {
-  // First, try the slug field
+  // First, try the slug field (HubSpot's native slug)
   if (post.slug) {
-    return post.slug
+    // Clean the slug - remove any query parameters or fragments
+    return post.slug.split('?')[0].split('#')[0].trim()
   }
   
   // Try to extract from absoluteUrl or url
   if (post.absoluteUrl) {
-    const urlParts = post.absoluteUrl.split("/")
-    const slug = urlParts[urlParts.length - 1] || urlParts[urlParts.length - 2]
-    if (slug && slug !== "blog" && !slug.includes(".")) {
-      return slug
+    try {
+      const url = new URL(post.absoluteUrl)
+      const pathParts = url.pathname.split("/").filter(p => p)
+      const slug = pathParts[pathParts.length - 1] // Get last path segment
+      if (slug && slug !== "blog" && !slug.includes(".")) {
+        return slug
+      }
+    } catch (e) {
+      // If URL parsing fails, try string splitting
+      const urlParts = post.absoluteUrl.split("/")
+      let slug = urlParts[urlParts.length - 1] || urlParts[urlParts.length - 2]
+      if (slug) {
+        slug = slug.split('?')[0].split('#')[0] // Remove query params and hash
+        if (slug && slug !== "blog" && !slug.includes(".")) {
+          return slug
+        }
+      }
     }
   }
   
   if (post.url) {
-    const urlParts = post.url.split("/")
-    const slug = urlParts[urlParts.length - 1] || urlParts[urlParts.length - 2]
-    if (slug && slug !== "blog" && !slug.includes(".")) {
-      return slug
+    try {
+      const url = new URL(post.url)
+      const pathParts = url.pathname.split("/").filter(p => p)
+      const slug = pathParts[pathParts.length - 1]
+      if (slug && slug !== "blog" && !slug.includes(".")) {
+        return slug
+      }
+    } catch (e) {
+      // If URL parsing fails, try string splitting
+      const urlParts = post.url.split("/")
+      let slug = urlParts[urlParts.length - 1] || urlParts[urlParts.length - 2]
+      if (slug) {
+        slug = slug.split('?')[0].split('#')[0] // Remove query params and hash
+        if (slug && slug !== "blog" && !slug.includes(".")) {
+          return slug
+        }
+      }
     }
   }
   
