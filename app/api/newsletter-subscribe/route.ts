@@ -126,9 +126,10 @@ export async function POST(request: NextRequest) {
       await upsertHubSpotContact({
         email: email,
         source: "newsletter",
+        resendMessageId: confirmationEmail.data.id, // Resend message ID
+        lastEmailSentDate: new Date().toISOString(),
         newsletter_subscribed: "true",
         newsletter_subscription_date: new Date().toISOString(),
-        hs_lead_status: "NEW",
       })
     }
 

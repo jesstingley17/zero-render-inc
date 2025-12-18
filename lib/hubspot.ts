@@ -7,6 +7,8 @@ interface HubSpotContactProperties {
   lastname?: string
   phone?: string
   source?: string
+  resendMessageId?: string // Resend email message ID
+  lastEmailSentDate?: string // ISO date string
   [key: string]: any // Allow additional custom properties
 }
 
@@ -23,6 +25,48 @@ export async function upsertHubSpotContact(properties: HubSpotContactProperties)
   }
 
   try {
+    // Build properties object with proper HubSpot field mapping
+    const hubspotProperties: Record<string, any> = {
+      email: properties.email,
+    }
+
+    // Standard contact fields
+    if (properties.firstname) {
+      hubspotProperties.firstname = properties.firstname
+    }
+    if (properties.lastname) {
+      hubspotProperties.lastname = properties.lastname
+    }
+    if (properties.phone) {
+      hubspotProperties.phone = properties.phone
+    }
+
+    // Source tracking - set analytics source and lead status
+    if (properties.source) {
+      hubspotProperties.hs_analytics_source = properties.source
+      hubspotProperties.hs_lead_status = "NEW"
+      // Also set a custom "source" property for easy filtering
+      hubspotProperties.source = "resend"
+    }
+
+    // Resend-specific tracking fields
+    if (properties.resendMessageId) {
+      hubspotProperties.resend_last_message_id = properties.resendMessageId
+    }
+    if (properties.lastEmailSentDate) {
+      hubspotProperties.resend_last_email_sent_date = properties.lastEmailSentDate
+    }
+
+    // Add any additional custom properties (excluding reserved fields)
+    const reservedFields = ["email", "firstname", "lastname", "phone", "source", "resendMessageId", "lastEmailSentDate"]
+    Object.entries(properties).forEach(([key, value]) => {
+      if (!reservedFields.includes(key) && value !== undefined && value !== null) {
+        // Convert camelCase to snake_case for HubSpot custom properties
+        const hubspotKey = key.replace(/([A-Z])/g, "_$1").toLowerCase()
+        hubspotProperties[hubspotKey] = value
+      }
+    })
+
     const response = await fetch("https://api.hubapi.com/crm/v3/objects/contacts", {
       method: "POST",
       headers: {
@@ -30,19 +74,7 @@ export async function upsertHubSpotContact(properties: HubSpotContactProperties)
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        properties: {
-          email: properties.email,
-          ...(properties.firstname && { firstname: properties.firstname }),
-          ...(properties.lastname && { lastname: properties.lastname }),
-          ...(properties.phone && { phone: properties.phone }),
-          ...(properties.source && { hs_lead_status: "NEW", hs_analytics_source: properties.source }),
-          // Add any additional properties
-          ...Object.fromEntries(
-            Object.entries(properties).filter(
-              ([key]) => !["email", "firstname", "lastname", "phone", "source"].includes(key)
-            )
-          ),
-        },
+        properties: hubspotProperties,
       }),
     })
 

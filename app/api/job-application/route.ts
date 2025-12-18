@@ -156,6 +156,8 @@ export async function POST(request: NextRequest) {
         lastname: nameParts.lastname,
         phone: data.phone as string | undefined,
         source: "job-application",
+        resendMessageId: emailData.id, // Resend message ID
+        lastEmailSentDate: new Date().toISOString(),
         contact_type: "job_application",
         position_applied: data.position as string | undefined,
         linkedin_url: data.linkedin as string | undefined,

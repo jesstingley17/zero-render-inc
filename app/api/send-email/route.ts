@@ -86,6 +86,8 @@ export async function POST(request: NextRequest) {
         firstname: nameParts.firstname,
         lastname: nameParts.lastname,
         source: "contact-form",
+        resendMessageId: data.id, // Resend message ID
+        lastEmailSentDate: new Date().toISOString(),
         contact_type: type || "inquiry",
         package_interest: packageTitle || "General Inquiry",
         last_contact_date: new Date().toISOString(),
