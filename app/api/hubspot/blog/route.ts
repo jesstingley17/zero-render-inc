@@ -95,7 +95,42 @@ function transformHubSpotPost(post: HubSpotBlogPost) {
   const wordCount = post.postBody?.replace(/<[^>]*>/g, "").split(/\s+/).length || 0
   const readTime = Math.ceil(wordCount / 200)
 
-  const slug = extractSlugFromHubSpotPost(post)
+  // Generate a URL-friendly slug from the title if slug is missing
+  const generateSlug = (title: string): string => {
+    return title
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '') // Remove special characters
+      .replace(/\s+/g, '-') // Replace spaces with hyphens
+      .replace(/-+/g, '-') // Replace multiple hyphens with single
+      .replace(/^-|-$/g, '') // Remove leading/trailing hyphens
+  }
+
+  // Try multiple slug sources
+  let slug = post.slug
+  
+  // If no slug, try to extract from URL
+  if (!slug && post.absoluteUrl) {
+    const urlParts = post.absoluteUrl.split("/")
+    slug = urlParts[urlParts.length - 1] || urlParts[urlParts.length - 2]
+    // Clean up the slug
+    if (slug) {
+      slug = slug.split('?')[0].split('#')[0] // Remove query params and hash
+      if (slug === 'blog' || slug.includes('.')) {
+        slug = null // Invalid slug
+      }
+    }
+  }
+  
+  // If still no slug, generate from title
+  if (!slug && post.name) {
+    slug = generateSlug(post.name)
+  }
+  
+  // Final fallback to ID
+  if (!slug) {
+    slug = post.id.toString()
+  }
 
   return {
     slug: slug,
@@ -112,6 +147,7 @@ function transformHubSpotPost(post: HubSpotBlogPost) {
     // Store original data for matching
     originalSlug: post.slug,
     originalId: post.id.toString(),
+    originalUrl: post.absoluteUrl || post.url || "",
   }
 }
 
@@ -126,31 +162,51 @@ export async function GET(request: NextRequest) {
       const posts = await fetchHubSpotBlogPosts()
       // Decode the slug in case it's URL encoded
       const decodedSlug = decodeURIComponent(slug).toLowerCase().trim()
+      const searchSlug = slug.toLowerCase().trim()
       
       // Transform all posts first to get consistent slug format
       const transformedPosts = posts.map(transformHubSpotPost)
       
-      // Try to find the post by transformed slug
-      let post = transformedPosts.find(
-        (p) =>
-          p.slug?.toLowerCase() === decodedSlug ||
-          p.slug?.toLowerCase() === slug.toLowerCase() ||
-          p.originalSlug?.toLowerCase() === decodedSlug ||
-          p.originalId === slug ||
-          p.originalId === decodedSlug
-      )
-
-      // If not found by transformed slug, try original HubSpot data
-      if (!post) {
-        const originalPost = posts.find(
-          (p: HubSpotBlogPost) =>
-            p.slug?.toLowerCase() === decodedSlug ||
-            p.slug?.toLowerCase() === slug.toLowerCase() ||
-            p.id.toString() === slug ||
-            p.id.toString() === decodedSlug ||
-            p.absoluteUrl?.toLowerCase().includes(decodedSlug) ||
-            p.url?.toLowerCase().includes(decodedSlug)
+      // Try multiple matching strategies
+      let post = transformedPosts.find((p) => {
+        const pSlug = p.slug?.toLowerCase().trim()
+        const pOriginalSlug = p.originalSlug?.toLowerCase().trim()
+        const pOriginalId = p.originalId?.toLowerCase().trim()
+        
+        return (
+          pSlug === decodedSlug ||
+          pSlug === searchSlug ||
+          pOriginalSlug === decodedSlug ||
+          pOriginalSlug === searchSlug ||
+          pOriginalId === slug ||
+          pOriginalId === decodedSlug ||
+          pOriginalId === searchSlug ||
+          // Try partial matches
+          pSlug?.includes(decodedSlug) ||
+          decodedSlug.includes(pSlug || '') ||
+          // Try matching against URL
+          p.originalUrl?.toLowerCase().includes(decodedSlug) ||
+          p.originalUrl?.toLowerCase().includes(searchSlug)
         )
+      })
+
+      // If still not found, try original HubSpot data directly
+      if (!post) {
+        const originalPost = posts.find((p: HubSpotBlogPost) => {
+          const pSlug = p.slug?.toLowerCase().trim()
+          const pId = p.id.toString().toLowerCase().trim()
+          const pUrl = (p.absoluteUrl || p.url || '').toLowerCase()
+          
+          return (
+            pSlug === decodedSlug ||
+            pSlug === searchSlug ||
+            pId === slug ||
+            pId === decodedSlug ||
+            pId === searchSlug ||
+            pUrl.includes(decodedSlug) ||
+            pUrl.includes(searchSlug)
+          )
+        })
         
         if (originalPost) {
           post = transformHubSpotPost(originalPost)
@@ -158,11 +214,15 @@ export async function GET(request: NextRequest) {
       }
 
       if (!post) {
-        const availableSlugs = transformedPosts.map((p) => p.slug)
-        const availableIds = transformedPosts.map((p) => p.originalId)
+        const availableSlugs = transformedPosts.map((p) => ({
+          slug: p.slug,
+          originalSlug: p.originalSlug,
+          id: p.originalId,
+          title: p.title
+        }))
+        
         console.error(`Post not found for slug: ${slug} (decoded: ${decodedSlug})`)
-        console.error(`Available slugs (first 5): ${availableSlugs.slice(0, 5).join(", ")}`)
-        console.error(`Available IDs (first 5): ${availableIds.slice(0, 5).join(", ")}`)
+        console.error(`Available posts (first 3):`, availableSlugs.slice(0, 3))
         
         // Return more detailed error for debugging
         return NextResponse.json({ 
@@ -170,14 +230,14 @@ export async function GET(request: NextRequest) {
           debug: {
             searchedSlug: slug,
             decodedSlug: decodedSlug,
-            availableSlugs: availableSlugs.slice(0, 10), // First 10 for debugging
+            availablePosts: availableSlugs.slice(0, 5), // First 5 for debugging
             totalPosts: transformedPosts.length
           }
         }, { status: 404 })
       }
 
       // Remove debug fields before returning
-      const { originalSlug, originalId, ...postData } = post as any
+      const { originalSlug, originalId, originalUrl, ...postData } = post as any
       return NextResponse.json({ post: postData })
     }
 
@@ -189,7 +249,7 @@ export async function GET(request: NextRequest) {
     transformedPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
     // Remove debug fields before returning
-    const cleanedPosts = transformedPosts.map(({ originalSlug, originalId, ...post }) => post)
+    const cleanedPosts = transformedPosts.map(({ originalSlug, originalId, originalUrl, ...post }) => post)
     
     // Log first post for debugging (only in development)
     if (process.env.NODE_ENV !== 'production' && cleanedPosts.length > 0) {
