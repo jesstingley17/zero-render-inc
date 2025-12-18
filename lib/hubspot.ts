@@ -1,4 +1,5 @@
 // HubSpot CRM integration helper functions
+// Syncs contacts to HubSpot CRM after Resend email sends
 
 interface HubSpotContactProperties {
   email: string
