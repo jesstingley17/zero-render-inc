@@ -35,7 +35,7 @@ function NewsletterForm() {
         throw new Error(data.error || "Failed to subscribe")
       }
 
-      setMessage({ type: "success", text: "Successfully subscribed! Check your email for confirmation." })
+      setMessage({ type: "success", text: "Successfully subscribed! Check your inbox for a confirmation email." })
       setEmail("")
     } catch (error) {
       console.error("Newsletter subscription error:", error)
