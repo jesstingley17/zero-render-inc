@@ -76,6 +76,7 @@ ${formData.additionalInfo || "N/A"}
           message: formattedMessage,
           type: "inquiry",
           packageTitle: packageTitle || "General Inquiry",
+          fullName: formData.fullName,
         }),
       })
 
