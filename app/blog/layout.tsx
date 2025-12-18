@@ -19,7 +19,7 @@ export const metadata: Metadata = {
       "Explore insights on AI-powered web design, modern digital experiences, and small business growth. Learn from ZeroRender's expert team about building fast, accessible websites and automated workflows.",
   },
   alternates: {
-    canonical: "https://www.zero-render.com/blog/",
+    canonical: "https://www.zero-render.com/blog",
   },
 }
 
