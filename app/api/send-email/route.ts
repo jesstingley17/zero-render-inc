@@ -1,5 +1,6 @@
 import { Resend } from "resend"
 import { type NextRequest, NextResponse } from "next/server"
+import { upsertHubSpotContact, parseName } from "@/lib/hubspot"
 
 export const dynamic = "force-dynamic"
 export const runtime = "nodejs"
@@ -15,7 +16,7 @@ const getResend = () => {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { email, message, type, packageTitle } = body
+    const { email, message, type, packageTitle, fullName } = body
 
     if (!email || !message) {
       return NextResponse.json({ error: "Email and message are required" }, { status: 400 })
@@ -75,6 +76,20 @@ export async function POST(request: NextRequest) {
         { error: error.message || "Failed to send email", details: error },
         { status: 500 }
       )
+    }
+
+    // Sync contact to HubSpot after successful email send
+    if (data && email) {
+      const nameParts = fullName ? parseName(fullName) : {}
+      await upsertHubSpotContact({
+        email: email,
+        firstname: nameParts.firstname,
+        lastname: nameParts.lastname,
+        source: "contact-form",
+        contact_type: type || "inquiry",
+        package_interest: packageTitle || "General Inquiry",
+        last_contact_date: new Date().toISOString(),
+      })
     }
 
     return NextResponse.json({ success: true, data })

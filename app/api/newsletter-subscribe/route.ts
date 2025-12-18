@@ -1,5 +1,6 @@
 import { Resend } from "resend"
 import { type NextRequest, NextResponse } from "next/server"
+import { upsertHubSpotContact } from "@/lib/hubspot"
 
 export const dynamic = "force-dynamic"
 export const runtime = "nodejs"
@@ -118,6 +119,17 @@ export async function POST(request: NextRequest) {
         { error: notificationEmail.error.message || "Failed to subscribe", details: notificationEmail.error },
         { status: 500 }
       )
+    }
+
+    // Sync contact to HubSpot after successful email send
+    if (confirmationEmail.data && email) {
+      await upsertHubSpotContact({
+        email: email,
+        source: "newsletter",
+        newsletter_subscribed: "true",
+        newsletter_subscription_date: new Date().toISOString(),
+        hs_lead_status: "NEW",
+      })
     }
 
     return NextResponse.json({ success: true, data: notificationEmail.data })

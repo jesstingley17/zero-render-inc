@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { Resend } from "resend"
+import { upsertHubSpotContact, parseName } from "@/lib/hubspot"
 
 export const dynamic = "force-dynamic"
 export const runtime = "nodejs"
@@ -144,6 +145,24 @@ export async function POST(request: NextRequest) {
     if (emailError) {
       console.error("Resend email error:", emailError)
       throw new Error("Failed to send application email")
+    }
+
+    // Sync contact to HubSpot after successful email send
+    if (emailData && data.email) {
+      const nameParts = data.name ? parseName(data.name as string) : {}
+      await upsertHubSpotContact({
+        email: data.email as string,
+        firstname: nameParts.firstname,
+        lastname: nameParts.lastname,
+        phone: data.phone as string | undefined,
+        source: "job-application",
+        contact_type: "job_application",
+        position_applied: data.position as string | undefined,
+        linkedin_url: data.linkedin as string | undefined,
+        github_url: data.github as string | undefined,
+        portfolio_url: data.portfolioUrl as string | undefined,
+        last_contact_date: new Date().toISOString(),
+      })
     }
 
     return NextResponse.json({ success: true, emailId: emailData?.id })
