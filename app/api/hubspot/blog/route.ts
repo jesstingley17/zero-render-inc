@@ -14,6 +14,7 @@ interface HubSpotBlogPost {
   created: number
   updated: number
   featuredImage: string | null
+  featuredImageAltText: string | null
   postSummary: string
   postBody: string
   metaDescription: string
@@ -204,6 +205,21 @@ function transformHubSpotPost(post: HubSpotBlogPost) {
 
   const normalizedSlug = normalizeSlug(slug)
 
+  // Extract featured image - try multiple possible fields
+  let featuredImage = post.featuredImage || 
+                      post.featured_image || 
+                      post.featuredImageUrl || 
+                      post.image || 
+                      null
+
+  // If no featured image, try to extract first image from post body
+  if (!featuredImage && post.postBody) {
+    const imgMatch = post.postBody.match(/<img[^>]+src=["']([^"']+)["'][^>]*>/i)
+    if (imgMatch && imgMatch[1]) {
+      featuredImage = imgMatch[1]
+    }
+  }
+
   return {
     slug: normalizedSlug,
     title: post.name || "Untitled",
@@ -213,7 +229,8 @@ function transformHubSpotPost(post: HubSpotBlogPost) {
     readTime: `${readTime} min read`,
     category: "Blog", // You can map this from HubSpot topics/tags if needed
     content: post.postBody || "",
-    featuredImage: post.featuredImage || null,
+    featuredImage: featuredImage,
+    featuredImageAlt: post.featuredImageAltText || post.featured_image_alt || null,
     url: post.absoluteUrl || post.url || "",
     metaDescription: post.metaDescription || "",
     // Store original data for matching
@@ -336,11 +353,26 @@ export async function GET(request: NextRequest) {
             post.content = fullPost.postBody
           }
           // Also update other fields that might be more complete in the full post
-          if (fullPost.featuredImage && !post.featuredImage) {
-            post.featuredImage = fullPost.featuredImage
+          const fullFeaturedImage = fullPost.featuredImage || 
+                                   fullPost.featured_image || 
+                                   fullPost.featuredImageUrl || 
+                                   fullPost.image
+          if (fullFeaturedImage && !post.featuredImage) {
+            post.featuredImage = fullFeaturedImage
+          }
+          if (fullPost.featuredImageAltText && !post.featuredImageAlt) {
+            post.featuredImageAlt = fullPost.featuredImageAltText
           }
           if (fullPost.metaDescription && !post.metaDescription) {
             post.metaDescription = fullPost.metaDescription
+          }
+          
+          // If still no featured image, extract from post body
+          if (!post.featuredImage && fullPost.postBody) {
+            const imgMatch = fullPost.postBody.match(/<img[^>]+src=["']([^"']+)["'][^>]*>/i)
+            if (imgMatch && imgMatch[1]) {
+              post.featuredImage = imgMatch[1]
+            }
           }
         }
       } catch (error) {

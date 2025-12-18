@@ -237,7 +237,7 @@ export default function BlogPostPage() {
             <div className="mb-8 sm:mb-10 md:mb-12">
               <img
                 src={post.featuredImage}
-                alt={post.title}
+                alt={post.featuredImageAlt || post.title}
                 className="w-full h-auto rounded-md"
               />
             </div>
