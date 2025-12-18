@@ -3,6 +3,8 @@ import { type NextRequest, NextResponse } from "next/server"
 export const dynamic = "force-dynamic"
 export const runtime = "nodejs"
 
+// HubSpot Blog Integration - Fetches blog posts from HubSpot Content API
+
 interface HubSpotBlogPost {
   id: string
   name: string
