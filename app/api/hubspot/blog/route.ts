@@ -244,11 +244,35 @@ function transformHubSpotPost(post: HubSpotBlogPost) {
                 post.blog_author ||
                 "ZeroRender Team"
 
+  // Extract author avatar/profile picture
+  const authorAvatar = post.blogAuthorAvatar ||
+                      post.blog_author_avatar ||
+                      post.authorAvatar ||
+                      post.author_avatar ||
+                      post.authorImage ||
+                      null
+
+  // Extract author bio
+  const authorBio = post.blogAuthorBio ||
+                   post.blog_author_bio ||
+                   post.authorBio ||
+                   post.author_bio ||
+                   ""
+
+  // Extract author email/username for potential profile link
+  const authorEmail = post.blogAuthorEmail ||
+                     post.blog_author_email ||
+                     post.authorEmail ||
+                     null
+
   return {
     slug: normalizedSlug,
     title: post.name || "Untitled",
     excerpt: post.postSummary || post.metaDescription || "",
     author: author,
+    authorAvatar: authorAvatar,
+    authorBio: authorBio,
+    authorEmail: authorEmail,
     date: new Date(post.publishDate || post.created).toISOString().split("T")[0],
     readTime: `${actualReadTime} min read`,
     category: "Blog", // You can map this from HubSpot topics/tags if needed
@@ -397,6 +421,36 @@ export async function GET(request: NextRequest) {
           
           if (fullAuthor && fullAuthor !== "ZeroRender Team") {
             post.author = fullAuthor
+          }
+
+          // Update author avatar
+          const fullAuthorAvatar = fullPost.blogAuthorAvatar ||
+                                  fullPost.blog_author_avatar ||
+                                  fullPost.authorAvatar ||
+                                  fullPost.author_avatar ||
+                                  fullPost.authorImage
+          
+          if (fullAuthorAvatar && !post.authorAvatar) {
+            post.authorAvatar = fullAuthorAvatar
+          }
+
+          // Update author bio
+          const fullAuthorBio = fullPost.blogAuthorBio ||
+                               fullPost.blog_author_bio ||
+                               fullPost.authorBio ||
+                               fullPost.author_bio
+          
+          if (fullAuthorBio && !post.authorBio) {
+            post.authorBio = fullAuthorBio
+          }
+
+          // Update author email
+          const fullAuthorEmail = fullPost.blogAuthorEmail ||
+                                 fullPost.blog_author_email ||
+                                 fullPost.authorEmail
+          
+          if (fullAuthorEmail && !post.authorEmail) {
+            post.authorEmail = fullAuthorEmail
           }
           
           // Also update other fields that might be more complete in the full post

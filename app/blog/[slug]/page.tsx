@@ -10,6 +10,9 @@ interface BlogPost {
   title: string
   content: string
   author: string
+  authorAvatar?: string | null
+  authorBio?: string
+  authorEmail?: string | null
   date: string
   readTime: string
   category: string
@@ -219,9 +222,6 @@ export default function BlogPostPage() {
                 <Clock className="w-4 h-4" />
                 <span>{post.readTime}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <span>By {post.author}</span>
-              </div>
               <button
                 onClick={handleShare}
                 className="ml-auto flex items-center gap-2 text-white/70 hover:text-white transition-colors"
@@ -229,6 +229,43 @@ export default function BlogPostPage() {
                 <Share2 className="w-4 h-4" />
                 <span>Share</span>
               </button>
+            </div>
+          </div>
+
+          {/* Author Profile Section */}
+          <div className="mb-8 sm:mb-10 md:mb-12 pb-8 border-b border-white/10">
+            <div className="flex items-start gap-4 sm:gap-6">
+              {post.authorAvatar ? (
+                <img
+                  src={post.authorAvatar}
+                  alt={post.author}
+                  className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover flex-shrink-0"
+                />
+              ) : (
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
+                  <span className="text-xl sm:text-2xl font-bold text-white">
+                    {post.author.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+              )}
+              <div className="flex-1">
+                <h3 className="text-lg sm:text-xl font-bold mb-1 sm:mb-2">
+                  {post.author}
+                </h3>
+                {post.authorBio && (
+                  <p className="text-sm sm:text-base text-zinc-400 leading-relaxed mb-2 sm:mb-3">
+                    {post.authorBio}
+                  </p>
+                )}
+                {post.authorEmail && (
+                  <a
+                    href={`mailto:${post.authorEmail}`}
+                    className="text-xs sm:text-sm text-zinc-500 hover:text-white transition-colors"
+                  >
+                    {post.authorEmail}
+                  </a>
+                )}
+              </div>
             </div>
           </div>
 
