@@ -131,9 +131,15 @@ export default function BlogPage() {
         )}
       </header>
 
-      {/* Blog Content */}
-      <section className="pt-24 sm:pt-28 md:pt-32 pb-16 sm:pb-20 md:pb-24 px-4 sm:px-6 md:px-8">
-        <div className="container mx-auto max-w-6xl">
+      {/* Blog Hero */}
+      <section className="relative pt-32 sm:pt-40 md:pt-48 pb-16 sm:pb-20 md:pb-24 px-4 sm:px-6 md:px-8 overflow-hidden">
+        {/* Background Ambience */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-white/5 rounded-full blur-[128px]" />
+          <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-white/5 rounded-full blur-[96px]" />
+        </div>
+
+        <div className="container mx-auto max-w-6xl relative z-10">
           {/* Back Button */}
           <Link
             href="/"
@@ -143,13 +149,25 @@ export default function BlogPage() {
             <span className="text-sm sm:text-base">Back to Home</span>
           </Link>
 
-          {/* Title */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter mb-4 sm:mb-5 md:mb-6">
-            Blog
-          </h1>
-          <p className="text-base sm:text-lg md:text-xl text-zinc-400 mb-12 sm:mb-14 md:mb-16 max-w-3xl">
-            Insights, tips, and updates on AI-powered web design, digital marketing, and growing your business online.
-          </p>
+          {/* Hero Title */}
+          <div className="mb-12 sm:mb-14 md:mb-16">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tighter mb-6 sm:mb-8 leading-tight">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-white/50">
+                Insights
+              </span>
+              <br />
+              <span className="text-white">That Drive Growth</span>
+            </h1>
+            <p className="text-lg sm:text-xl md:text-2xl text-zinc-300 max-w-3xl leading-relaxed">
+              Expert insights on AI-powered web design, digital marketing, and strategies to scale your business online.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Blog Content */}
+      <section className="pb-16 sm:pb-20 md:pb-24 px-4 sm:px-6 md:px-8">
+        <div className="container mx-auto max-w-7xl">
 
           {/* Loading State */}
           {loading && (
@@ -170,47 +188,85 @@ export default function BlogPage() {
 
           {/* Blog Posts Grid */}
           {!loading && !error && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
-              {blogPosts.map((post) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 md:gap-12">
+              {blogPosts.map((post, index) => (
                 <Link
                   key={post.slug}
                   href={`/blog/${post.slug}`}
-                  className="group border border-white/10 p-6 sm:p-8 hover:bg-white/5 transition-all duration-300 flex flex-col"
+                  className="group relative overflow-hidden border border-white/10 bg-white/5 hover:bg-white/10 transition-all duration-500 flex flex-col"
+                  style={{
+                    animationDelay: `${index * 100}ms`,
+                  }}
                 >
+                  {/* Featured Image */}
                   {post.featuredImage && (
-                    <div className="mb-4 aspect-video overflow-hidden">
+                    <div className="relative aspect-video overflow-hidden bg-zinc-900">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
                       <img
                         src={post.featuredImage}
                         alt={post.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       />
+                      <div className="absolute top-4 left-4 z-20">
+                        <span className="inline-block px-3 py-1 text-xs uppercase tracking-widest bg-white/20 backdrop-blur-sm text-white border border-white/30">
+                          {post.category}
+                        </span>
+                      </div>
                     </div>
                   )}
-                  <div className="mb-4">
-                    <span className="text-xs uppercase tracking-widest text-zinc-500">{post.category}</span>
-                  </div>
-                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tighter mb-3 sm:mb-4 group-hover:text-white transition-colors">
-                    {post.title}
-                  </h2>
-                  <p className="text-sm sm:text-base text-zinc-400 mb-4 sm:mb-6 leading-relaxed flex-grow">
-                    {post.excerpt || "Read more..."}
-                  </p>
-                  <div className="flex items-center gap-4 text-xs sm:text-sm text-zinc-500 pt-4 border-t border-white/10">
-                    <div className="flex items-center gap-1.5">
-                      <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
-                      <span>
-                        {new Date(post.date).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric",
-                        })}
-                      </span>
+
+                  {/* Content */}
+                  <div className="p-6 sm:p-8 flex flex-col flex-grow">
+                    {!post.featuredImage && (
+                      <div className="mb-4">
+                        <span className="text-xs uppercase tracking-widest text-zinc-500">{post.category}</span>
+                      </div>
+                    )}
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tighter mb-4 sm:mb-5 group-hover:text-white transition-colors duration-300 leading-tight">
+                      {post.title}
+                    </h2>
+                    <p className="text-sm sm:text-base text-zinc-400 mb-6 sm:mb-8 leading-relaxed flex-grow line-clamp-3">
+                      {post.excerpt || "Read more..."}
+                    </p>
+
+                    {/* Meta Info */}
+                    <div className="flex items-center justify-between pt-6 border-t border-white/10">
+                      <div className="flex items-center gap-4 text-xs sm:text-sm text-zinc-500">
+                        <div className="flex items-center gap-1.5">
+                          <Calendar className="w-4 h-4" />
+                          <span>
+                            {new Date(post.date).toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric",
+                            })}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <Clock className="w-4 h-4" />
+                          <span>{post.readTime}</span>
+                        </div>
+                      </div>
+                      <div className="text-white/70 group-hover:text-white transition-colors">
+                        <svg
+                          className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M17 8l4 4m0 0l-4 4m4-4H3"
+                          />
+                        </svg>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
-                      <span>{post.readTime}</span>
-                    </div>
                   </div>
+
+                  {/* Hover Effect Overlay */}
+                  <div className="absolute inset-0 border-2 border-white/0 group-hover:border-white/20 transition-all duration-500 pointer-events-none" />
                 </Link>
               ))}
             </div>

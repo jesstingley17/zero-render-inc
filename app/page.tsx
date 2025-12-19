@@ -125,6 +125,18 @@ export default function Page() {
               </a>
             ))}
             <a
+              href="/services"
+              className="text-xs lg:text-sm uppercase tracking-widest text-white/70 hover:text-white transition-colors duration-300"
+            >
+              Services
+            </a>
+            <a
+              href="/about"
+              className="text-xs lg:text-sm uppercase tracking-widest text-white/70 hover:text-white transition-colors duration-300"
+            >
+              About
+            </a>
+            <a
               href="/blog"
               className="text-xs lg:text-sm uppercase tracking-widest text-white/70 hover:text-white transition-colors duration-300"
             >
@@ -160,6 +172,20 @@ export default function Page() {
                   {item}
                 </a>
               ))}
+              <a
+                href="/services"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-lg uppercase tracking-widest text-white/70 hover:text-white py-3 transition-colors touch-manipulation"
+              >
+                Services
+              </a>
+              <a
+                href="/about"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-lg uppercase tracking-widest text-white/70 hover:text-white py-3 transition-colors touch-manipulation"
+              >
+                About
+              </a>
               <a
                 href="/blog"
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -642,6 +668,103 @@ export default function Page() {
         </div>
       </section>
 
+      {/* Testimonials Section */}
+      <section id="testimonials" className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 md:px-8 bg-zinc-950 border-t border-white/10">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-12 sm:mb-14 md:mb-16">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-4 sm:mb-5 md:mb-6">
+              What Our Clients Say
+            </h2>
+            <p className="text-base sm:text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+              Don't just take our word for it. Here's what businesses like yours are saying about working with ZeroRender.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {/* Testimonial 1 */}
+            <div className="border border-white/10 p-6 sm:p-8 bg-white/5 hover:bg-white/10 transition-colors">
+              <div className="mb-4 sm:mb-6">
+                <div className="flex gap-1 mb-2">
+                  {[...Array(5)].map((_, i) => (
+                    <svg
+                      key={i}
+                      className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                <p className="text-sm sm:text-base md:text-lg text-zinc-300 leading-relaxed italic">
+                  "ZeroRender transformed our online presence completely. The website they built is fast, beautiful, and
+                  has already generated more leads than we expected. The AI chatbot integration was a game-changer for
+                  our customer service."
+                </p>
+              </div>
+              <div className="pt-4 border-t border-white/10">
+                <p className="text-sm sm:text-base font-semibold text-white">Sarah Chen</p>
+                <p className="text-xs sm:text-sm text-zinc-500">Founder, TechStart Solutions</p>
+              </div>
+            </div>
+
+            {/* Testimonial 2 */}
+            <div className="border border-white/10 p-6 sm:p-8 bg-white/5 hover:bg-white/10 transition-colors">
+              <div className="mb-4 sm:mb-6">
+                <div className="flex gap-1 mb-2">
+                  {[...Array(5)].map((_, i) => (
+                    <svg
+                      key={i}
+                      className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                <p className="text-sm sm:text-base md:text-lg text-zinc-300 leading-relaxed italic">
+                  "The branding package exceeded our expectations. Not only did we get a stunning logo and brand kit,
+                  but the team also helped us understand how to use our new identity consistently across all platforms.
+                  Professional, fast, and affordable."
+                </p>
+              </div>
+              <div className="pt-4 border-t border-white/10">
+                <p className="text-sm sm:text-base font-semibold text-white">Marcus Rodriguez</p>
+                <p className="text-xs sm:text-sm text-zinc-500">Owner, Urban Bistro Co.</p>
+              </div>
+            </div>
+
+            {/* Testimonial 3 */}
+            <div className="border border-white/10 p-6 sm:p-8 bg-white/5 hover:bg-white/10 transition-colors">
+              <div className="mb-4 sm:mb-6">
+                <div className="flex gap-1 mb-2">
+                  {[...Array(5)].map((_, i) => (
+                    <svg
+                      key={i}
+                      className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                <p className="text-sm sm:text-base md:text-lg text-zinc-300 leading-relaxed italic">
+                  "As a small business owner, I was worried about the cost and complexity of going digital. ZeroRender
+                  made it easy and affordable. Their AI integration package helped us automate so much, and the support
+                  has been incredible. Highly recommend!"
+                </p>
+              </div>
+              <div className="pt-4 border-t border-white/10">
+                <p className="text-sm sm:text-base font-semibold text-white">Jennifer Park</p>
+                <p className="text-xs sm:text-sm text-zinc-500">CEO, Wellness Collective</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Newsletter Section */}
       <section id="newsletter" className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 md:px-8 bg-zinc-950 border-t border-white/10">
         <div className="container mx-auto max-w-4xl">
@@ -732,6 +855,22 @@ export default function Page() {
                     </a>
                   </li>
                 ))}
+                <li>
+                  <a
+                    href="/services"
+                    className="hover:text-white transition-colors touch-manipulation inline-block py-1"
+                  >
+                    Services
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/about"
+                    className="hover:text-white transition-colors touch-manipulation inline-block py-1"
+                  >
+                    About
+                  </a>
+                </li>
                 <li>
                   <a
                     href="/blog"

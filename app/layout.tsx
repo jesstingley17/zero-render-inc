@@ -19,6 +19,9 @@ export const metadata: Metadata = {
     icon: "/logo_bw_inverted.png",
     apple: "/logo_bw_inverted.png",
   },
+  alternates: {
+    canonical: "https://www.zero-render.com",
+  },
   openGraph: {
     title: "ZeroRender - AI-Powered Digital Experiences for Small Business",
     description:

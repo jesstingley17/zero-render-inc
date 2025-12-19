@@ -187,8 +187,32 @@ export default function BlogPostPage() {
         )}
       </header>
 
+      {/* Featured Image Hero */}
+      {post.featuredImage && (
+        <div className="relative h-[50vh] sm:h-[60vh] md:h-[70vh] overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent z-10" />
+          <img
+            src={post.featuredImage}
+            alt={post.title}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute bottom-0 left-0 right-0 z-20 px-4 sm:px-6 md:px-8 pb-12 sm:pb-16 md:pb-20">
+            <div className="container mx-auto max-w-4xl">
+              <div className="mb-4">
+                <span className="inline-block px-4 py-2 text-xs uppercase tracking-widest bg-white/20 backdrop-blur-sm text-white border border-white/30">
+                  {post.category}
+                </span>
+              </div>
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-white leading-tight">
+                {post.title}
+              </h1>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Blog Post Content */}
-      <article className="pt-24 sm:pt-28 md:pt-32 pb-16 sm:pb-20 md:pb-24 px-4 sm:px-6 md:px-8">
+      <article className={`${post.featuredImage ? 'pt-12 sm:pt-16 md:pt-20' : 'pt-24 sm:pt-28 md:pt-32'} pb-16 sm:pb-20 md:pb-24 px-4 sm:px-6 md:px-8`}>
         <div className="container mx-auto max-w-4xl">
           {/* Back Button */}
           <Link
@@ -199,95 +223,135 @@ export default function BlogPostPage() {
             <span className="text-sm sm:text-base">Back to Blog</span>
           </Link>
 
-          {/* Post Header */}
-          <div className="mb-8 sm:mb-10 md:mb-12">
-            <div className="mb-4">
-              <span className="text-xs uppercase tracking-widest text-zinc-500">{post.category}</span>
-            </div>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter mb-6 sm:mb-8">
-              {post.title}
-            </h1>
-            <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm sm:text-base text-zinc-400 border-b border-white/10 pb-6">
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4" />
-                <span>
-                  {new Date(post.date).toLocaleDateString("en-US", {
-                    month: "long",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
-                </span>
+          {/* Post Header (if no featured image) */}
+          {!post.featuredImage && (
+            <div className="mb-8 sm:mb-10 md:mb-12">
+              <div className="mb-4">
+                <span className="text-xs uppercase tracking-widest text-zinc-500">{post.category}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4" />
-                <span>{post.readTime}</span>
-              </div>
-              <button
-                onClick={handleShare}
-                className="ml-auto flex items-center gap-2 text-white/70 hover:text-white transition-colors"
-              >
-                <Share2 className="w-4 h-4" />
-                <span>Share</span>
-              </button>
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter mb-6 sm:mb-8 leading-tight">
+                {post.title}
+              </h1>
             </div>
+          )}
+
+          {/* Meta Info Bar */}
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm sm:text-base text-zinc-400 border-b border-white/10 pb-8 mb-8 sm:mb-10 md:mb-12">
+            <div className="flex items-center gap-2">
+              <Calendar className="w-4 h-4" />
+              <span>
+                {new Date(post.date).toLocaleDateString("en-US", {
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Clock className="w-4 h-4" />
+              <span>{post.readTime}</span>
+            </div>
+            <button
+              onClick={handleShare}
+              className="ml-auto flex items-center gap-2 text-white/70 hover:text-white transition-colors px-4 py-2 hover:bg-white/5 rounded-md"
+            >
+              <Share2 className="w-4 h-4" />
+              <span>Share</span>
+            </button>
           </div>
 
           {/* Author Profile Section */}
           <div className="mb-8 sm:mb-10 md:mb-12 pb-8 border-b border-white/10">
-            <div className="flex items-start gap-4 sm:gap-6">
-              {post.authorAvatar ? (
-                <img
-                  src={post.authorAvatar}
-                  alt={post.author}
-                  className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover flex-shrink-0"
-                />
-              ) : (
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
-                  <span className="text-xl sm:text-2xl font-bold text-white">
-                    {post.author.charAt(0).toUpperCase()}
-                  </span>
-                </div>
-              )}
-              <div className="flex-1">
-                <h3 className="text-lg sm:text-xl font-bold mb-1 sm:mb-2">
-                  {post.author}
-                </h3>
-                {post.authorBio && (
-                  <p className="text-sm sm:text-base text-zinc-400 leading-relaxed mb-2 sm:mb-3">
-                    {post.authorBio}
-                  </p>
-                )}
-                {post.authorEmail && (
-                  <a
-                    href={`mailto:${post.authorEmail}`}
-                    className="text-xs sm:text-sm text-zinc-500 hover:text-white transition-colors"
+            <div className="bg-white/5 border border-white/10 p-6 sm:p-8 rounded-lg">
+              <div className="flex items-start gap-4 sm:gap-6">
+                {post.authorAvatar ? (
+                  <Link
+                    href={`/about#${post.author.toLowerCase().replace(/\s+/g, '-')}`}
+                    className="block flex-shrink-0 hover:opacity-80 transition-opacity"
                   >
-                    {post.authorEmail}
-                  </a>
+                    <img
+                      src={post.authorAvatar}
+                      alt={post.author}
+                      className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-white/20"
+                    />
+                  </Link>
+                ) : (
+                  <Link
+                    href={`/about#${post.author.toLowerCase().replace(/\s+/g, '-')}`}
+                    className="block flex-shrink-0 hover:opacity-80 transition-opacity"
+                  >
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white/10 flex items-center justify-center border-2 border-white/20">
+                      <span className="text-2xl sm:text-3xl font-bold text-white">
+                        {post.author.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                  </Link>
                 )}
+                <div className="flex-1">
+                  <Link
+                    href={`/about#${post.author.toLowerCase().replace(/\s+/g, '-')}`}
+                    className="block group"
+                  >
+                    <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2 group-hover:text-white transition-colors">
+                      {post.author}
+                    </h3>
+                  </Link>
+                  {post.authorBio && (
+                    <p className="text-sm sm:text-base text-zinc-300 leading-relaxed mb-2 sm:mb-3">
+                      {post.authorBio}
+                    </p>
+                  )}
+                  {post.authorEmail && (
+                    <a
+                      href={`mailto:${post.authorEmail}`}
+                      className="text-xs sm:text-sm text-zinc-400 hover:text-white transition-colors inline-flex items-center gap-1"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                        />
+                      </svg>
+                      {post.authorEmail}
+                    </a>
+                  )}
+                  <p className="text-xs sm:text-sm text-zinc-500 mt-2">
+                    Published by <span className="text-white font-semibold">{post.author}</span>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Featured Image */}
-          {post.featuredImage && (
-            <div className="mb-8 sm:mb-10 md:mb-12">
-              <img
-                src={post.featuredImage}
-                alt={post.featuredImageAlt || post.title}
-                className="w-full h-auto rounded-md"
-              />
-            </div>
-          )}
-
           {/* Post Content */}
           <div
-            className="prose prose-invert max-w-none blog-content"
+            className="prose prose-invert max-w-none blog-content mb-12 sm:mb-16 md:mb-20"
             dangerouslySetInnerHTML={{ __html: post.content }}
             style={{
               color: "#e4e4e7",
+              fontSize: "1.125rem",
+              lineHeight: "1.75",
             }}
           />
+
+          {/* Share Section */}
+          <div className="border-t border-b border-white/10 py-8 sm:py-10 mb-12 sm:mb-16">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <h3 className="text-lg sm:text-xl font-bold mb-2">Enjoyed this article?</h3>
+                <p className="text-sm sm:text-base text-zinc-400">Share it with others who might find it valuable.</p>
+              </div>
+              <button
+                onClick={handleShare}
+                className="px-6 py-3 bg-white text-black hover:bg-zinc-900 hover:text-white transition-all duration-300 font-semibold text-sm uppercase tracking-wider flex items-center gap-2"
+              >
+                <Share2 className="w-4 h-4" />
+                Share Article
+              </button>
+            </div>
+          </div>
         </div>
       </article>
 
