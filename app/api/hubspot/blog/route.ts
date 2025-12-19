@@ -50,6 +50,9 @@ export async function fetchHubSpotBlogPosts() {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
+      // Add timeout and better caching
+      next: { revalidate: 300 }, // Cache for 5 minutes
+      signal: AbortSignal.timeout(10000), // 10 second timeout
     })
 
     if (!response.ok) {

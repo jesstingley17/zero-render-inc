@@ -17,20 +17,18 @@ interface BlogPost {
 
 async function getBlogPosts(): Promise<BlogPost[]> {
   try {
-    // Fetch directly from API route on the server
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.zero-render.com"
-    const response = await fetch(`${baseUrl}/api/hubspot/blog`, {
-      next: { revalidate: 300 }, // Cache for 5 minutes
-      cache: "force-cache",
-    })
-
-    if (!response.ok) {
-      console.error("Failed to fetch blog posts:", response.statusText)
-      return []
-    }
-
-    const data = await response.json()
-    return data.posts || []
+    // Import functions directly to avoid HTTP overhead
+    const { fetchHubSpotBlogPosts, transformHubSpotPost } = await import("@/app/api/hubspot/blog/route")
+    
+    // Fetch directly from HubSpot (much faster than HTTP request)
+    const posts = await fetchHubSpotBlogPosts()
+    const transformedPosts = posts.map(transformHubSpotPost)
+    
+    // Sort by publish date (newest first)
+    transformedPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    
+    // Remove debug fields
+    return transformedPosts.map(({ originalSlug, originalId, originalUrl, ...post }) => post)
   } catch (error) {
     console.error("Error fetching blog posts:", error)
     return []

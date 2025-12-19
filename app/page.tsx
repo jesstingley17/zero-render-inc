@@ -1,10 +1,18 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import dynamic from "next/dynamic"
 import { Menu, X, ArrowDown, Mail } from "lucide-react"
 import Link from "next/link"
-import ContactForm from "@/components/contact-form"
-import JobApplicationSection from "@/components/job-application-section"
+
+// Lazy load heavy components to improve initial page load
+const ContactForm = dynamic(() => import("@/components/contact-form"), {
+  ssr: false, // Only load on client side
+})
+
+const JobApplicationSection = dynamic(() => import("@/components/job-application-section"), {
+  ssr: false, // Only load on client side
+})
 
 function NewsletterForm() {
   const [email, setEmail] = useState("")
