@@ -235,7 +235,7 @@ export default function HubSpotCTAPopup() {
 
   return (
     <div
-      className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4 sm:p-4"
+      className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-2 sm:p-4"
       onClick={handleClose}
       style={{ 
         position: "fixed",
@@ -243,7 +243,7 @@ export default function HubSpotCTAPopup() {
         left: 0,
         right: 0,
         bottom: 0,
-        overflow: "auto",
+        overflow: "hidden",
         WebkitOverflowScrolling: "touch"
       }}
     >
@@ -251,9 +251,11 @@ export default function HubSpotCTAPopup() {
         className="bg-white rounded-lg w-full max-w-[700px] my-auto relative flex flex-col shadow-2xl"
         onClick={(e) => e.stopPropagation()}
         style={{ 
-          maxHeight: "calc(100vh - 2rem)",
+          maxHeight: "95vh",
           minHeight: "min-content",
-          margin: "1rem auto"
+          margin: "1rem auto",
+          display: "flex",
+          flexDirection: "column"
         }}
       >
         {/* Close Button */}
@@ -293,14 +295,15 @@ export default function HubSpotCTAPopup() {
           id="hubspot-form-container"
           className="w-full px-4 sm:px-6 md:px-8 lg:px-10 py-4 sm:py-5 md:py-6 lg:py-8 flex-1"
           style={{
-            minHeight: "300px",
-            maxHeight: "calc(100vh - 350px)",
+            minHeight: "200px",
+            flex: "1 1 auto",
             WebkitOverflowScrolling: "touch",
             overflowY: "auto",
             overflowX: "hidden",
             width: "100%",
             boxSizing: "border-box",
-            position: "relative"
+            position: "relative",
+            overscrollBehavior: "contain"
           }}
         >
           {/* Loading indicator */}
