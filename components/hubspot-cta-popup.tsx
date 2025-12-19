@@ -43,6 +43,86 @@ export default function HubSpotCTAPopup() {
     }
   }, [])
 
+  // Add mobile-optimized CSS for HubSpot form
+  useEffect(() => {
+    if (!isOpen) return
+
+    const styleId = "hubspot-form-mobile-styles"
+    if (document.getElementById(styleId)) return
+
+    const style = document.createElement("style")
+    style.id = styleId
+    style.textContent = `
+      #hubspot-form-container {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+      #hubspot-form-container form {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+      }
+      #hubspot-form-container .hs-form-field {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-bottom: 1rem !important;
+      }
+      #hubspot-form-container .hs-input,
+      #hubspot-form-container input[type="text"],
+      #hubspot-form-container input[type="email"],
+      #hubspot-form-container input[type="tel"],
+      #hubspot-form-container textarea,
+      #hubspot-form-container select {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        font-size: 16px !important;
+        padding: 0.75rem !important;
+        border-radius: 0.375rem !important;
+      }
+      #hubspot-form-container .hs-submit {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+      #hubspot-form-container .hs-button {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0.875rem 1.5rem !important;
+        font-size: 1rem !important;
+      }
+      #hubspot-form-container iframe {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+      @media (max-width: 640px) {
+        #hubspot-form-container {
+          padding-left: 0.5rem !important;
+          padding-right: 0.5rem !important;
+        }
+        #hubspot-form-container .hs-form-field {
+          margin-bottom: 1.25rem !important;
+        }
+        #hubspot-form-container .hs-input,
+        #hubspot-form-container input[type="text"],
+        #hubspot-form-container input[type="email"],
+        #hubspot-form-container input[type="tel"],
+        #hubspot-form-container textarea,
+        #hubspot-form-container select {
+          font-size: 16px !important;
+          padding: 0.875rem !important;
+        }
+      }
+    `
+    document.head.appendChild(style)
+
+    return () => {
+      const existingStyle = document.getElementById(styleId)
+      if (existingStyle) {
+        existingStyle.remove()
+      }
+    }
+  }, [isOpen])
+
   // Load HubSpot Forms script and initialize
   useEffect(() => {
     if (!isOpen) return
@@ -74,6 +154,7 @@ export default function HubSpotCTAPopup() {
             formId: "9640698c-a4b5-4b11-8dcb-8a88049637e9",
             region: "na2",
             target: "#hubspot-form-container",
+            css: "",
           })
           console.log("[HubSpot Form] Form creation called")
           return true
@@ -200,12 +281,14 @@ export default function HubSpotCTAPopup() {
         {/* HubSpot Form Container */}
         <div
           id="hubspot-form-container"
-          className="w-full px-6 sm:px-8 md:px-10 py-5 sm:py-6 md:py-8 flex-1 overflow-y-auto"
+          className="w-full px-4 sm:px-6 md:px-8 lg:px-10 py-4 sm:py-5 md:py-6 lg:py-8 flex-1 overflow-y-auto"
           style={{
             minHeight: "300px",
             maxHeight: "calc(100vh - 400px)",
             WebkitOverflowScrolling: "touch",
-            overflowY: "auto"
+            overflowY: "auto",
+            width: "100%",
+            boxSizing: "border-box"
           }}
         >
           {/* Loading indicator */}
