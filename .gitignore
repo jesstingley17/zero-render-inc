@@ -1,6 +1,11 @@
 .vercel
 .env*.local
+.env
 node_modules/
 .next/
 *.log
 .DS_Store
+# DNS and API credentials (never commit these)
+*.key
+*.secret
+*credentials*
