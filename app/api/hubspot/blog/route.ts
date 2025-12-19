@@ -52,21 +52,29 @@ export async function fetchHubSpotBlogPosts() {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
-      // Add timeout and better caching
-      next: { revalidate: 300 }, // Cache for 5 minutes
+      // Remove next.revalidate for dynamic routes - it conflicts with force-dynamic
       signal: AbortSignal.timeout(10000), // 10 second timeout
     })
 
     if (!response.ok) {
       const errorText = await response.text()
-      throw new Error(`HubSpot API error: ${response.status} - ${errorText}`)
+      console.error(`HubSpot API error: ${response.status} - ${errorText}`)
+      // Return empty array instead of throwing to prevent site breakage
+      return []
     }
 
     const data = await response.json()
-    return data.objects || []
+    const posts = data.objects || []
+    
+    if (posts.length === 0) {
+      console.warn("HubSpot API returned no blog posts. Check if blog has published posts.")
+    }
+    
+    return posts
   } catch (error) {
     console.error("HubSpot API error:", error)
-    throw error
+    // Return empty array instead of throwing to prevent site breakage
+    return []
   }
 }
 
