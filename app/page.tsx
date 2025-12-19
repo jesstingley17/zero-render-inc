@@ -231,8 +231,11 @@ export default function Page() {
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-white/50">Perfection.</span>
           </h1>
 
+          <p className="text-base sm:text-lg md:text-xl text-white/60 max-w-2xl mx-auto leading-relaxed mb-6 sm:mb-8 px-1">
+            ZeroRender is a premier web design studio and full-service digital design agency specializing in modern website design, brand identity, and AI-powered digital solutions. Our web design studio creates custom websites that combine stunning visual design with intelligent technology, helping small businesses and startups establish a powerful online presence.
+          </p>
           <p className="text-base sm:text-lg md:text-xl text-white/60 max-w-2xl mx-auto leading-relaxed mb-10 sm:mb-11 md:mb-12 px-1">
-            ZeroRender is a modern design and technology studio building human-designed websites, brands, and digital products. We equip startups and small businesses with sophisticated, intelligent digital experiences, providing enterprise-level tools without the associated complexity or cost.
+            As a leading branding studio and digital design agency, we deliver enterprise-level website design and development services without the complexity or high costs typically associated with large agencies. Our team of expert designers and developers crafts responsive websites, develops cohesive brand identities, and integrates cutting-edge AI tools that enhance your business operations and customer engagement.
           </p>
         </div>
 
@@ -247,8 +250,11 @@ export default function Page() {
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-6 sm:mb-8 md:mb-10 text-center">
             Our Services as a Leading Digital Design Agency
           </h2>
-          <p className="text-base sm:text-lg md:text-xl text-zinc-400 max-w-3xl mx-auto text-center leading-relaxed mb-12 sm:mb-14 md:mb-16">
+          <p className="text-base sm:text-lg md:text-xl text-zinc-400 max-w-3xl mx-auto text-center leading-relaxed mb-8 sm:mb-10">
             As a full-service digital design agency, we offer a comprehensive suite of solutions tailored to elevate your brand and accelerate your growth. Our expertise is focused on delivering tangible results and a significant return on investment.
+          </p>
+          <p className="text-sm sm:text-base md:text-lg text-zinc-500 max-w-3xl mx-auto text-center leading-relaxed mb-12 sm:mb-14 md:mb-16">
+            Whether you need a complete website redesign, a new brand identity, or advanced AI integration, our digital design agency provides end-to-end services that transform your online presence. We understand that effective website design goes beyond aesthetics—it requires strategic thinking, technical expertise, and a deep understanding of your business goals.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 md:gap-8">
             {[
@@ -275,8 +281,11 @@ export default function Page() {
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-6 sm:mb-8 md:mb-10 text-center">
             Our Strategic Approach
           </h2>
-          <p className="text-base sm:text-lg md:text-xl text-zinc-400 max-w-3xl mx-auto text-center leading-relaxed mb-12 sm:mb-14 md:mb-16">
+          <p className="text-base sm:text-lg md:text-xl text-zinc-400 max-w-3xl mx-auto text-center leading-relaxed mb-8 sm:mb-10">
             Our methodology is built on a foundation of strategy, execution, and partnership, ensuring every project we undertake is positioned for success from the outset.
+          </p>
+          <p className="text-sm sm:text-base md:text-lg text-zinc-500 max-w-3xl mx-auto text-center leading-relaxed mb-12 sm:mb-14 md:mb-16">
+            Every successful website design project begins with understanding your unique business needs. Our web design studio takes a collaborative approach, working closely with you to develop custom solutions that reflect your brand values and drive measurable business outcomes. From initial concept to final launch, we ensure your website design meets the highest standards of quality, performance, and user experience.
           </p>
           <div className="space-y-8 sm:space-y-10 md:space-y-12">
             <div className="border border-white/10 p-6 sm:p-8 hover:bg-white/5 transition-colors">
