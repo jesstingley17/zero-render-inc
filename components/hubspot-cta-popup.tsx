@@ -43,7 +43,7 @@ export default function HubSpotCTAPopup() {
     }
   }, [])
 
-  // Load HubSpot CTA script and initialize
+  // Load HubSpot Forms script and initialize
   useEffect(() => {
     if (!isOpen) return
 
@@ -51,42 +51,45 @@ export default function HubSpotCTAPopup() {
     let retryCount = 0
     const maxRetries = 20
 
-    const initializeCTA = () => {
-      const ctaElement = document.getElementById("hs-cta-embed-279511877357")
+    const initializeForm = () => {
+      const formContainer = document.getElementById("hubspot-form-container")
       
-      if (!ctaElement) {
-        console.error("[HubSpot CTA] Element not found")
+      if (!formContainer) {
+        console.error("[HubSpot Form] Container not found")
         return false
       }
 
-      // Check if already initialized (has iframe)
-      if (ctaElement.querySelector("iframe")) {
-        console.log("[HubSpot CTA] Already initialized")
+      // Check if form already exists
+      if (formContainer.querySelector("form") || formContainer.querySelector("iframe")) {
+        console.log("[HubSpot Form] Already initialized")
         return true
       }
 
-      // Try to initialize
-      if (typeof window !== "undefined" && (window as any).hscta) {
+      // Try to create form
+      if (typeof window !== "undefined" && (window as any).hbspt && (window as any).hbspt.forms) {
         try {
-          console.log("[HubSpot CTA] Initializing...")
-          ;(window as any).hscta.load(279511877357, {
-            targetId: "hs-cta-embed-279511877357",
+          console.log("[HubSpot Form] Creating form...")
+          ;(window as any).hbspt.forms.create({
+            portalId: "244653866",
+            formId: "9640698c-a4b5-4b11-8dcb-8a88049637e9",
+            region: "na2",
+            target: "#hubspot-form-container",
           })
-          console.log("[HubSpot CTA] Initialization called")
+          console.log("[HubSpot Form] Form creation called")
           return true
         } catch (error) {
-          console.error("[HubSpot CTA] Error initializing:", error)
+          console.error("[HubSpot Form] Error creating form:", error)
           return false
         }
       } else {
-        console.log("[HubSpot CTA] hscta not available yet")
+        console.log("[HubSpot Form] hbspt.forms not available yet")
       }
       
       return false
     }
 
     const tryInitialize = () => {
-      if (initializeCTA()) {
+      if (initializeForm()) {
         return // Success
       }
 
@@ -94,16 +97,16 @@ export default function HubSpotCTAPopup() {
       if (retryCount < maxRetries) {
         setTimeout(tryInitialize, 300)
       } else {
-        console.error("Failed to initialize HubSpot CTA after multiple attempts")
+        console.error("Failed to initialize HubSpot form after multiple attempts")
       }
     }
 
     // Check if script already exists
-    const existingScript = document.getElementById("hs-script-loader") as HTMLScriptElement
+    const existingScript = document.getElementById("hs-forms-script-loader") as HTMLScriptElement
     
     if (existingScript) {
       // Script exists, wait for it to be ready
-      if ((window as any).hscta) {
+      if ((window as any).hbspt && (window as any).hbspt.forms) {
         setTimeout(tryInitialize, 200)
       } else {
         existingScript.onload = () => setTimeout(tryInitialize, 200)
@@ -112,20 +115,21 @@ export default function HubSpotCTAPopup() {
         }
       }
     } else {
-      // Load the script
+      // Load the HubSpot Forms script
       script = document.createElement("script")
-      script.src = "https://js-na2.hscta.com/cta/current.js"
+      script.src = "https://js-na2.hsforms.net/forms/embed/v2.js"
       script.async = true
       script.charset = "utf-8"
-      script.id = "hs-script-loader"
+      script.id = "hs-forms-script-loader"
+      script.type = "text/javascript"
       
       script.onload = () => {
-        // Wait a bit for script to initialize, then try to load CTA
+        // Wait a bit for script to initialize, then try to create form
         setTimeout(tryInitialize, 500)
       }
       
       script.onerror = () => {
-        console.error("Failed to load HubSpot CTA script")
+        console.error("Failed to load HubSpot Forms script")
       }
       
       document.head.appendChild(script)
@@ -144,7 +148,7 @@ export default function HubSpotCTAPopup() {
       onClick={handleClose}
     >
       <div
-        className="bg-white rounded-lg w-full max-w-[700px] max-h-[90vh] overflow-hidden relative"
+        className="bg-white rounded-lg w-full max-w-[700px] max-h-[90vh] overflow-auto relative"
         onClick={(e) => e.stopPropagation()}
         style={{ maxHeight: "90vh" }}
       >
@@ -157,41 +161,21 @@ export default function HubSpotCTAPopup() {
           <X className="w-5 h-5 text-black" />
         </button>
 
-        {/* HubSpot CTA Embed - Using exact structure from HubSpot */}
+        {/* HubSpot Form Container */}
         <div
-          id="hs-cta-embed-279511877357"
-          className="hs-cta-embed hs-cta-embed-279511877357"
+          id="hubspot-form-container"
+          className="w-full p-6 sm:p-8"
           style={{
-            maxWidth: "100%",
-            maxHeight: "100%",
-            width: "100%",
-            minWidth: "320px",
-            height: "620px",
+            minHeight: "400px",
           }}
-          data-hubspot-wrapper-cta-id="279511877357"
         >
-          <div className="hs-cta-loading-dot__container">
-            <div className="hs-cta-loading-dot"></div>
-            <div className="hs-cta-loading-dot"></div>
-            <div className="hs-cta-loading-dot"></div>
+          {/* Loading indicator */}
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-black mb-4"></div>
+              <p className="text-sm text-gray-600">Loading form...</p>
+            </div>
           </div>
-          <div className="hs-cta-embed__skeleton"></div>
-          <picture>
-            <source
-              srcSet="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
-              media="(max-width: 480px)"
-            />
-            <img
-              alt="Exclusive Website Transformation Opportunity Apply for a complimentary 6-page website rebuild&mdash;designed for one exceptional small business or startup"
-              loading="lazy"
-              src="https://hubspot-no-cache-na2-prod.s3.amazonaws.com/cta/default/244653866/interactive-279511877357.png"
-              style={{ height: "100%", width: "100%", objectFit: "fill" }}
-              onError={(e) => {
-                const target = e.target as HTMLImageElement
-                target.style.display = "none"
-              }}
-            />
-          </picture>
         </div>
       </div>
     </div>
