@@ -1,8 +1,6 @@
-"use client"
-
-import { useState, useEffect } from "react"
-import { Menu, X, ArrowLeft, Calendar, Clock } from "lucide-react"
+import { ArrowLeft, Calendar, Clock } from "lucide-react"
 import Link from "next/link"
+import { BlogHeader } from "@/components/blog-header"
 
 interface BlogPost {
   slug: string
@@ -15,125 +13,41 @@ interface BlogPost {
   featuredImage?: string | null
 }
 
-export default function BlogPage() {
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+async function getBlogPosts(): Promise<BlogPost[]> {
+  try {
+    // Fetch directly from API route on the server
+    // Using absolute URL for server-side fetch
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_URL 
+      ? `https://${process.env.VERCEL_URL}` 
+      : "http://localhost:3000"
+    
+    const response = await fetch(`${baseUrl}/api/hubspot/blog`, {
+      next: { revalidate: 300 }, // Cache for 5 minutes
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
 
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50)
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
-
-  useEffect(() => {
-    async function fetchPosts() {
-      try {
-        setLoading(true)
-        // Use Next.js fetch with cache revalidation
-        // The API route has revalidate=300, so this will use cached data when available
-        const response = await fetch("/api/hubspot/blog", {
-          next: { revalidate: 300 }, // Cache for 5 minutes
-        })
-        const data = await response.json()
-
-        if (!response.ok) {
-          throw new Error(data.error || "Failed to fetch blog posts")
-        }
-
-        setBlogPosts(data.posts || [])
-      } catch (err) {
-        console.error("Error fetching blog posts:", err)
-        setError(err instanceof Error ? err.message : "Failed to load blog posts")
-        // Keep empty array so page still renders
-        setBlogPosts([])
-      } finally {
-        setLoading(false)
-      }
+    if (!response.ok) {
+      console.error("Failed to fetch blog posts:", response.statusText)
+      return []
     }
 
-    fetchPosts()
-  }, [])
+    const data = await response.json()
+    return data.posts || []
+  } catch (error) {
+    console.error("Error fetching blog posts:", error)
+    return []
+  }
+}
+
+export default async function BlogPage() {
+  // Fetch data on the server - much faster!
+  const blogPosts = await getBlogPosts()
 
   return (
     <main className="bg-black text-white min-h-screen">
-      {/* Header */}
-      <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled ? "bg-black/80 backdrop-blur-md border-b border-white/10" : "bg-transparent"
-        }`}
-      >
-        <div className="container mx-auto px-4 sm:px-6 md:px-8 h-16 sm:h-18 md:h-20 flex items-center justify-between">
-          <Link href="/" className="block transition-opacity hover:opacity-70 duration-300">
-            <img src="/logo_bw_inverted.png" alt="ZeroRender" className="h-7 sm:h-10 md:h-12 w-auto" />
-          </Link>
-
-          <nav className="hidden md:flex items-center space-x-6 lg:space-x-8">
-            {["Expertise", "Approach", "Packages", "Team", "Vision"].map((item) => (
-              <a
-                key={item}
-                href={`/#${item.toLowerCase()}`}
-                className="text-xs lg:text-sm uppercase tracking-widest text-white/70 hover:text-white transition-colors duration-300"
-              >
-                {item}
-              </a>
-            ))}
-            <Link
-              href="/blog"
-              className="text-xs lg:text-sm uppercase tracking-widest text-white hover:text-white transition-colors duration-300"
-            >
-              Blog
-            </Link>
-            <Link
-              href="/#contact"
-              className="bg-white text-black hover:bg-zinc-900 hover:text-white rounded-none uppercase tracking-wider text-sm px-4 py-2 transition-colors"
-            >
-              Get Started
-            </Link>
-          </nav>
-
-          <button
-            className="md:hidden text-white p-2 -mr-2 touch-manipulation"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            {isMobileMenuOpen ? <X size={32} /> : <Menu size={32} />}
-          </button>
-        </div>
-
-        {isMobileMenuOpen && (
-          <div className="absolute top-16 sm:top-18 md:top-20 left-0 right-0 bg-black border-b border-white/10 py-6 px-4 md:hidden">
-            <nav className="flex flex-col space-y-4">
-              {["Expertise", "Approach", "Packages", "Team", "Vision"].map((item) => (
-                <a
-                  key={item}
-                  href={`/#${item.toLowerCase()}`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-lg uppercase tracking-widest text-white/70 hover:text-white py-3 transition-colors touch-manipulation"
-                >
-                  {item}
-                </a>
-              ))}
-              <Link
-                href="/blog"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-lg uppercase tracking-widest text-white hover:text-white py-3 transition-colors touch-manipulation"
-              >
-                Blog
-              </Link>
-              <Link
-                href="/#contact"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="bg-white text-black hover:bg-zinc-900 hover:text-white rounded-none uppercase tracking-wider text-base px-6 py-4 mt-2 w-full transition-colors touch-manipulation"
-              >
-                Get Started
-              </Link>
-            </nav>
-          </div>
-        )}
-      </header>
+      <BlogHeader />
 
       {/* Blog Hero */}
       <section className="relative pt-32 sm:pt-40 md:pt-48 pb-16 sm:pb-20 md:pb-24 px-4 sm:px-6 md:px-8 overflow-hidden">
@@ -172,51 +86,14 @@ export default function BlogPage() {
       {/* Blog Content */}
       <section className="pb-16 sm:pb-20 md:pb-24 px-4 sm:px-6 md:px-8">
         <div className="container mx-auto max-w-7xl">
-
-          {/* Loading State */}
-          {loading && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 md:gap-12">
-              {[...Array(6)].map((_, i) => (
-                <div
-                  key={i}
-                  className="border border-white/10 bg-white/5 animate-pulse"
-                >
-                  <div className="aspect-video bg-zinc-800" />
-                  <div className="p-6 sm:p-8 space-y-4">
-                    <div className="h-4 w-20 bg-zinc-800 rounded" />
-                    <div className="h-8 bg-zinc-800 rounded" />
-                    <div className="h-4 bg-zinc-800 rounded" />
-                    <div className="h-4 bg-zinc-800 rounded w-3/4" />
-                    <div className="pt-4 border-t border-white/10">
-                      <div className="h-4 bg-zinc-800 rounded w-1/2" />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Error State */}
-          {error && !loading && (
-            <div className="text-center py-16 sm:py-20 md:py-24">
-              <p className="text-lg sm:text-xl text-red-400 mb-4">{error}</p>
-              <p className="text-sm text-zinc-500">
-                Make sure HUBSPOT_API_KEY and HUBSPOT_BLOG_ID are configured in your environment variables.
-              </p>
-            </div>
-          )}
-
           {/* Blog Posts Grid */}
-          {!loading && !error && (
+          {blogPosts.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 md:gap-12">
               {blogPosts.map((post, index) => (
                 <Link
                   key={post.slug}
                   href={`/blog/${post.slug}`}
                   className="group relative overflow-hidden border border-white/10 bg-white/5 hover:bg-white/10 transition-all duration-500 flex flex-col"
-                  style={{
-                    animationDelay: `${index * 100}ms`,
-                  }}
                 >
                   {/* Featured Image */}
                   {post.featuredImage && (
@@ -290,10 +167,7 @@ export default function BlogPage() {
                 </Link>
               ))}
             </div>
-          )}
-
-          {/* Empty State (if no posts) */}
-          {!loading && !error && blogPosts.length === 0 && (
+          ) : (
             <div className="text-center py-16 sm:py-20 md:py-24">
               <p className="text-lg sm:text-xl text-zinc-400">No blog posts yet. Check back soon!</p>
             </div>
@@ -402,4 +276,3 @@ export default function BlogPage() {
     </main>
   )
 }
-

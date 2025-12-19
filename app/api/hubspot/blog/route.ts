@@ -28,7 +28,7 @@ interface HubSpotBlogPost {
 }
 
 // Helper function to fetch blog posts from HubSpot
-async function fetchHubSpotBlogPosts() {
+export async function fetchHubSpotBlogPosts() {
   const apiKey = process.env.HUBSPOT_API_KEY
   const blogId = process.env.HUBSPOT_BLOG_ID
 
@@ -152,7 +152,7 @@ function extractSlugFromHubSpotPost(post: HubSpotBlogPost): string {
 }
 
 // Transform HubSpot post to our format
-function transformHubSpotPost(post: HubSpotBlogPost) {
+export function transformHubSpotPost(post: HubSpotBlogPost) {
   // Calculate read time (approximately 200 words per minute)
   const wordCount = post.postBody?.replace(/<[^>]*>/g, "").split(/\s+/).length || 0
   const readTime = Math.ceil(wordCount / 200)
