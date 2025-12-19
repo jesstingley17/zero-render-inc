@@ -243,10 +243,24 @@ export default function PrivacyPolicyPage() {
               </p>
               <ul className="list-disc list-inside space-y-2 text-base sm:text-lg text-zinc-300 leading-relaxed ml-4 mt-4">
                 <li>Google Analytics for website analytics</li>
+                <li>Microsoft Clarity for behavioral analytics and user experience insights</li>
                 <li>Email service providers for newsletter delivery</li>
                 <li>Payment processors for transaction processing</li>
                 <li>Cloud hosting services for data storage</li>
               </ul>
+              
+              <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 mt-8">Microsoft Clarity</h3>
+              <p className="text-base sm:text-lg text-zinc-300 leading-relaxed mb-4">
+                We partner with Microsoft Clarity and Microsoft Advertising to capture how you use and interact with our website through behavioral metrics, heatmaps, and session replay to improve and market our products/services. Website usage data is captured using first and third-party cookies and other tracking technologies to determine the popularity of products/services and online activity. Additionally, we use this information for site optimization, fraud/security purposes, and advertising. For more information about how Microsoft collects and uses your data, visit the{" "}
+                <a 
+                  href="https://privacy.microsoft.com/privacystatement" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-white underline hover:text-zinc-300"
+                >
+                  Microsoft Privacy Statement
+                </a>.
+              </p>
             </div>
 
             {/* Data Security */}

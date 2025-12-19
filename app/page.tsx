@@ -991,8 +991,17 @@ export default function Page() {
             </div>
           </div>
 
-          <div className="border-t border-white/10 py-6 sm:py-7 md:py-8 text-zinc-500 text-xs sm:text-sm text-center">
-            © {new Date().getFullYear()} ZeroRender, Inc. All rights reserved.
+          <div className="border-t border-white/10 py-6 sm:py-7 md:py-8 space-y-4">
+            <p className="text-zinc-500 text-xs sm:text-sm text-center leading-relaxed max-w-3xl mx-auto px-4">
+              We improve our products and advertising by using Microsoft Clarity to see how you use our website. By using our site, you agree that we and Microsoft can collect and use this data. Our{" "}
+              <a href="/privacy-policy" className="text-white/70 hover:text-white underline">
+                privacy statement
+              </a>{" "}
+              has more details.
+            </p>
+            <p className="text-zinc-500 text-xs sm:text-sm text-center">
+              © {new Date().getFullYear()} ZeroRender, Inc. All rights reserved.
+            </p>
           </div>
         </div>
       </footer>
