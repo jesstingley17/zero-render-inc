@@ -72,7 +72,16 @@ export default function RootLayout({
             })(window, document, "clarity", "script", "uo291mbuhk");
           `}
         </Script>
+        <Script src="https://www.googletagmanager.com/gtag/js?id=AW-17815193591" strategy="lazyOnload" />
         <Script src="https://www.googletagmanager.com/gtag/js?id=AW-16828943917" strategy="lazyOnload" />
+        <Script id="google-ads-new" strategy="lazyOnload">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'AW-17815193591');
+          `}
+        </Script>
         <Script id="google-analytics" strategy="lazyOnload">
           {`
             window.dataLayer = window.dataLayer || [];
