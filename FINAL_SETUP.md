@@ -8,34 +8,46 @@ Since you're using **Starlight Hyperlift Manager** on `hub.zero-render.com`, we'
 
 ### 1. DNS Record for HubSpot
 
-**In Cloudflare (or your DNS provider):**
+**In Spaceship DNS:**
 
-1. Go to **DNS** → **Records**
-2. Add a new **CNAME record**:
-   - **Name:** `blog`
-   - **Target:** `hubspot.com`
-   - **TTL:** Auto or 3600
-3. **Save**
+1. Log into your Spaceship account
+2. Go to **DNS Management** for `zero-render.com`
+3. Add a new **CNAME record**:
+   - **Name/Host:** `blog`
+   - **Target/Value:** `hubspot.com`
+   - **TTL:** 3600 (or Auto if available)
+4. **Save**
 
 This creates: `blog.zero-render.com` → `hubspot.com`
 
-### 2. Cloudflare Transform Rule
+### 2. Add Reverse Proxy Header
 
-**In Cloudflare Dashboard:**
+**Important:** Spaceship doesn't have the same header modification features as Cloudflare. You have a few options:
 
-1. Go to **Rules** → **Transform Rules**
-2. Click **Create rule** → **Modify Request Header**
-3. Configure:
-   - **Rule name:** `HubSpot Reverse Proxy Header`
-   - **When incoming requests match:**
-     - Field: `Hostname`
-     - Operator: `equals`
-     - Value: `blog.zero-render.com`
-   - **Then:**
-     - **Action:** Set static
-     - **Header name:** `X-HS-Public-Host`
-     - **Value:** `blog.zero-render.com`
-4. Click **Deploy**
+#### Option A: Use Cloudflare in Front (Recommended if possible)
+
+If you can add Cloudflare in front of Spaceship:
+1. Point your domain's nameservers to Cloudflare
+2. Configure Cloudflare Transform Rule as described in `HUBSPOT_REVERSE_PROXY_SETUP.md`
+3. Cloudflare will add the header before forwarding to Spaceship/HubSpot
+
+#### Option B: Use Next.js Middleware (May work)
+
+The `middleware.ts` file in your project already adds the header. However, **this may not work** because HubSpot validates the proxy before requests reach your Next.js app.
+
+To test if it works:
+1. Deploy your Next.js app
+2. Visit: `https://blog.zero-render.com/hubfs/hs-reverse-proxy-validation-test`
+3. Check if HubSpot validates it
+
+#### Option C: Use a Proxy Service
+
+You might need to use a service like:
+- Cloudflare (free tier) in front of your DNS
+- A reverse proxy service that can add headers
+- Nginx or similar if you have server access
+
+**Note:** The `X-HS-Public-Host` header **must** be added before the request reaches HubSpot. If Spaceship doesn't support this, you'll need an intermediary service.
 
 ### 3. Configure HubSpot (Optional but Recommended)
 
@@ -62,7 +74,7 @@ HubSpot should automatically detect the reverse proxy once DNS and headers are c
 The code has been updated to:
 - ✅ Rewrite all HubSpot URLs to use `blog.zero-render.com`
 - ✅ Process blog images, assets, and content through the reverse proxy
-- ✅ Work automatically once DNS and Cloudflare rules are configured
+- ✅ Middleware attempts to add the `X-HS-Public-Host` header (may need additional proxy layer)
 
 ## Testing
 
@@ -82,19 +94,26 @@ After DNS propagates (24-48 hours):
 ## Summary
 
 - ✅ `hub.zero-render.com` → **Starlight Hyperlift Manager** (keep as is)
-- ✅ `blog.zero-render.com` → **HubSpot** (new CNAME record)
-- ✅ Cloudflare Transform Rule for `blog.zero-render.com` (add header)
+- ✅ `blog.zero-render.com` → **HubSpot** (new CNAME record in Spaceship)
+- ⚠️ **Header configuration needed** - Spaceship may not support adding headers directly
 - ✅ Code updated to use `blog.zero-render.com`
-- ✅ HubSpot will auto-validate (no manual config usually needed)
+- ✅ Middleware included (may need additional proxy layer)
 
 ## Next Steps
 
-1. ✅ Add the DNS CNAME record for `blog.zero-render.com` → `hubspot.com`
-2. ✅ Create the Cloudflare Transform Rule (add `X-HS-Public-Host` header)
+1. ✅ Add the DNS CNAME record in Spaceship: `blog.zero-render.com` → `hubspot.com`
+2. ⚠️ **Configure header addition** - Choose one of the options above (Cloudflare, middleware test, or proxy service)
 3. ⏳ Wait for DNS propagation (24-48 hours)
 4. ✅ Test the reverse proxy validation URL: `https://blog.zero-render.com/hubfs/hs-reverse-proxy-validation-test`
-5. ✅ HubSpot will automatically validate and recognize the reverse proxy
+5. ✅ If validation fails, you'll need to add a proxy layer that can modify headers
 6. ✅ Check that blog images load correctly from `blog.zero-render.com`
+
+## Important Note
+
+**The `X-HS-Public-Host` header is critical** - HubSpot requires it for reverse proxy validation. If Spaceship doesn't support adding custom headers, you'll need to:
+- Use Cloudflare (free) in front of your DNS, OR
+- Use a reverse proxy service, OR
+- Test if the Next.js middleware works (less likely to work for validation)
 
 That's it! 🎉
 
