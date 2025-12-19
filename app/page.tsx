@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import dynamic from "next/dynamic"
 import { Menu, X, ArrowDown, Mail } from "lucide-react"
-import Link from "next/link"
 
 // Lazy load heavy components to improve initial page load
 const ContactForm = dynamic(() => import("@/components/contact-form"), {
