@@ -17,7 +17,6 @@ export default function HubSpotCTAPopup() {
 
   const handleClose = () => {
     setIsOpen(false)
-    // No longer storing in localStorage - popup will show on every visit
   }
 
   // Add mobile-optimized CSS for HubSpot form
@@ -164,7 +163,6 @@ export default function HubSpotCTAPopup() {
             formId: "1lkBpjKS1SxGNy4qIBJY36Q41ns4q",
             region: "na2",
             target: "#hubspot-form-container",
-            css: "",
           })
           console.log("[HubSpot Form] Form creation called")
           return true
@@ -186,7 +184,7 @@ export default function HubSpotCTAPopup() {
 
       retryCount++
       if (retryCount < maxRetries) {
-        setTimeout(tryInitialize, 100) // Reduced from 300ms to 100ms for faster retries
+        setTimeout(tryInitialize, 200)
       } else {
         console.error("Failed to initialize HubSpot form after multiple attempts")
       }
@@ -198,11 +196,11 @@ export default function HubSpotCTAPopup() {
     if (existingScript) {
       // Script exists, wait for it to be ready
       if ((window as any).hbspt && (window as any).hbspt.forms) {
-        setTimeout(tryInitialize, 50) // Reduced delay
+        setTimeout(tryInitialize, 100)
       } else {
-        existingScript.onload = () => setTimeout(tryInitialize, 50)
+        existingScript.onload = () => setTimeout(tryInitialize, 100)
         if (existingScript.complete || existingScript.readyState === "complete") {
-          setTimeout(tryInitialize, 50)
+          setTimeout(tryInitialize, 100)
         }
       }
     } else {
@@ -215,8 +213,7 @@ export default function HubSpotCTAPopup() {
       script.type = "text/javascript"
       
       script.onload = () => {
-        // Wait a bit for script to initialize, then try to create form
-        setTimeout(tryInitialize, 200) // Reduced from 500ms to 200ms
+        setTimeout(tryInitialize, 300)
       }
       
       script.onerror = () => {
@@ -235,80 +232,60 @@ export default function HubSpotCTAPopup() {
 
   return (
     <div
-      className="fixed inset-0 z-[100] bg-black/80 flex items-start justify-center p-2 sm:p-4 overflow-y-auto"
+      className="fixed inset-0 z-[100] bg-black/80"
       onClick={handleClose}
-      style={{ 
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        WebkitOverflowScrolling: "touch",
-        paddingTop: "1rem",
-        paddingBottom: "1rem"
-      }}
     >
       <div
-        className="bg-white rounded-lg w-full max-w-[700px] my-4 sm:my-8 relative flex flex-col shadow-2xl"
+        className="absolute inset-0 overflow-y-auto p-4"
         onClick={(e) => e.stopPropagation()}
-        style={{ 
-          maxHeight: "calc(100vh - 2rem)",
-          margin: "1rem auto",
-          display: "flex",
-          flexDirection: "column",
-          overflow: "hidden"
-        }}
       >
-        {/* Close Button */}
-        <button
-          onClick={handleClose}
-          className="absolute top-4 right-4 sm:top-5 sm:right-5 z-20 w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-gray-100 hover:bg-gray-200 active:bg-gray-300 rounded-full transition-all duration-200 shadow-sm touch-manipulation"
-          aria-label="Close popup"
-          style={{ touchAction: "manipulation" }}
+        <div
+          className="bg-white rounded-lg w-full max-w-[700px] mx-auto my-8 relative shadow-2xl"
+          onClick={(e) => e.stopPropagation()}
         >
-          <X className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700" />
-        </button>
+          {/* Close Button */}
+          <button
+            onClick={handleClose}
+            className="absolute top-4 right-4 z-20 w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-gray-100 hover:bg-gray-200 active:bg-gray-300 rounded-full transition-all duration-200 shadow-sm touch-manipulation"
+            aria-label="Close popup"
+            style={{ touchAction: "manipulation" }}
+          >
+            <X className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700" />
+          </button>
 
-        {/* Header Section */}
-        <div className="px-6 sm:px-8 md:px-10 pt-6 sm:pt-8 md:pt-10 pb-5 sm:pb-6 md:pb-8 border-b border-gray-100 bg-gradient-to-b from-gray-50 to-white flex-shrink-0">
-          <div className="pr-8 sm:pr-10">
-            <h2 className="text-3xl sm:text-4xl font-bold text-black mb-5 sm:mb-6 leading-tight tracking-tight">
-              Win a Complimentary 6-Page Website
-            </h2>
-            <div className="space-y-4 text-base sm:text-lg text-gray-700 leading-relaxed">
-              <p className="text-gray-800">
-                We are offering one business the opportunity to receive a complimentary, fully custom six-page website—designed, developed, and launched by ZeroRender, Inc.
-              </p>
-              <p className="text-gray-700">
-                This is not a template or demo build. The selected business will receive a modern, mobile-responsive website structured for clarity, performance, and real-world usability. The initiative reflects our studio's standards and approach to digital work, while providing a meaningful upgrade to a business positioned for growth.
-              </p>
-              <div className="mt-5 pt-4 border-t border-gray-200">
-                <p className="font-semibold text-gray-900 text-lg">
-                  Entry is free. One business will be selected through a randomized drawing and contacted directly.
+          {/* Header Section */}
+          <div className="px-6 sm:px-8 md:px-10 pt-6 sm:pt-8 md:pt-10 pb-5 sm:pb-6 md:pb-8 border-b border-gray-100 bg-gradient-to-b from-gray-50 to-white">
+            <div className="pr-8 sm:pr-10">
+              <h2 className="text-3xl sm:text-4xl font-bold text-black mb-5 sm:mb-6 leading-tight tracking-tight">
+                Win a Complimentary 6-Page Website
+              </h2>
+              <div className="space-y-4 text-base sm:text-lg text-gray-700 leading-relaxed">
+                <p className="text-gray-800">
+                  We are offering one business the opportunity to receive a complimentary, fully custom six-page website—designed, developed, and launched by ZeroRender, Inc.
                 </p>
+                <p className="text-gray-700">
+                  This is not a template or demo build. The selected business will receive a modern, mobile-responsive website structured for clarity, performance, and real-world usability. The initiative reflects our studio's standards and approach to digital work, while providing a meaningful upgrade to a business positioned for growth.
+                </p>
+                <div className="mt-5 pt-4 border-t border-gray-200">
+                  <p className="font-semibold text-gray-900 text-lg">
+                    Entry is free. One business will be selected through a randomized drawing and contacted directly.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* HubSpot Form Container */}
-        <div
-          id="hubspot-form-container"
-          className="w-full px-4 sm:px-6 md:px-8 lg:px-10 py-4 sm:py-5 md:py-6 lg:py-8 flex-1 overflow-y-auto"
-          style={{
-            minHeight: "200px",
-            width: "100%",
-            boxSizing: "border-box",
-            position: "relative",
-            WebkitOverflowScrolling: "touch",
-            maxHeight: "calc(100vh - 450px)"
-          }}
-        >
-          {/* Loading indicator */}
-          <div className="flex items-center justify-center py-12">
-            <div className="text-center">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-2 border-gray-300 border-t-black mb-4"></div>
-              <p className="text-sm text-gray-600 font-medium">Loading form...</p>
+          {/* HubSpot Form Container */}
+          <div
+            id="hubspot-form-container"
+            className="w-full px-4 sm:px-6 md:px-8 lg:px-10 py-4 sm:py-5 md:py-6 lg:py-8"
+          >
+            {/* Loading indicator */}
+            <div className="flex items-center justify-center py-12">
+              <div className="text-center">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-2 border-gray-300 border-t-black mb-4"></div>
+                <p className="text-sm text-gray-600 font-medium">Loading form...</p>
+              </div>
             </div>
           </div>
         </div>
@@ -316,4 +293,3 @@ export default function HubSpotCTAPopup() {
     </div>
   )
 }
-
