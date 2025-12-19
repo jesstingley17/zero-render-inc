@@ -7,8 +7,8 @@ import { OttoPixel } from "@/components/otto-pixel"
 import Script from "next/script"
 import "./globals.css"
 
-const _geist = Geist({ subsets: ["latin"] })
-const _geistMono = Geist_Mono({ subsets: ["latin"] })
+const geist = Geist({ subsets: ["latin"] })
+const geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.zero-render.com"),
@@ -96,7 +96,7 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body className={`font-sans antialiased`}>
+      <body className={`${geist.className} antialiased`}>
         <noscript>
           <iframe
             src="https://www.googletagmanager.com/ns.html?id=GTM-NDVQ85KM"
