@@ -222,7 +222,7 @@ export default function Page() {
 
         <div className="relative z-10 max-w-5xl mx-auto text-center">
           <h2 className="text-xs sm:text-sm md:text-base uppercase tracking-[0.15em] sm:tracking-[0.2em] md:tracking-[0.3em] text-white/50 mb-4 sm:mb-5 md:mb-6">
-            Future-Proof Digital Solutions
+            Premier Web Design Studio
           </h2>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold tracking-tighter mb-6 sm:mb-7 md:mb-8 leading-[1.1] px-1">
@@ -248,7 +248,7 @@ export default function Page() {
       <section id="expertise" className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 md:px-8">
         <div className="container mx-auto max-w-6xl">
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-6 sm:mb-8 md:mb-10 text-center">
-            Our Services as a Leading Digital Design Agency
+            Our Web Design Studio Services
           </h2>
           <p className="text-base sm:text-lg md:text-xl text-zinc-400 max-w-3xl mx-auto text-center leading-relaxed mb-8 sm:mb-10">
             As a full-service digital design agency, we offer a comprehensive suite of solutions tailored to elevate your brand and accelerate your growth. Our expertise is focused on delivering tangible results and a significant return on investment.
