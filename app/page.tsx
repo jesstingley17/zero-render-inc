@@ -704,7 +704,7 @@ export default function Page() {
               </div>
               <div className="pt-4 border-t border-white/10">
                 <p className="text-sm sm:text-base font-semibold text-white">Sarah Chen</p>
-                <p className="text-xs sm:text-sm text-zinc-500">Founder, TechStart Solutions</p>
+                <p className="text-xs sm:text-sm text-zinc-500">Founder</p>
               </div>
             </div>
 
@@ -731,7 +731,7 @@ export default function Page() {
               </div>
               <div className="pt-4 border-t border-white/10">
                 <p className="text-sm sm:text-base font-semibold text-white">Marcus Rodriguez</p>
-                <p className="text-xs sm:text-sm text-zinc-500">Owner, Urban Bistro Co.</p>
+                <p className="text-xs sm:text-sm text-zinc-500">Business Owner</p>
               </div>
             </div>
 
@@ -758,7 +758,7 @@ export default function Page() {
               </div>
               <div className="pt-4 border-t border-white/10">
                 <p className="text-sm sm:text-base font-semibold text-white">Jennifer Park</p>
-                <p className="text-xs sm:text-sm text-zinc-500">CEO, Wellness Collective</p>
+                <p className="text-xs sm:text-sm text-zinc-500">CEO</p>
               </div>
             </div>
           </div>
