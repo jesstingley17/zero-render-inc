@@ -144,26 +144,40 @@ export default function HubSpotCTAPopup() {
 
   return (
     <div
-      className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4"
+      className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4 sm:p-4"
       onClick={handleClose}
+      style={{ 
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        overflow: "auto",
+        WebkitOverflowScrolling: "touch"
+      }}
     >
       <div
-        className="bg-white rounded-lg w-full max-w-[700px] max-h-[90vh] overflow-hidden relative flex flex-col shadow-2xl"
+        className="bg-white rounded-lg w-full max-w-[700px] my-auto relative flex flex-col shadow-2xl"
         onClick={(e) => e.stopPropagation()}
-        style={{ maxHeight: "90vh" }}
+        style={{ 
+          maxHeight: "calc(100vh - 2rem)",
+          minHeight: "min-content",
+          margin: "1rem auto"
+        }}
       >
         {/* Close Button */}
         <button
           onClick={handleClose}
-          className="absolute top-5 right-5 z-20 w-9 h-9 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded-full transition-all duration-200 shadow-sm"
+          className="absolute top-4 right-4 sm:top-5 sm:right-5 z-20 w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-gray-100 hover:bg-gray-200 active:bg-gray-300 rounded-full transition-all duration-200 shadow-sm touch-manipulation"
           aria-label="Close popup"
+          style={{ touchAction: "manipulation" }}
         >
-          <X className="w-5 h-5 text-gray-700" />
+          <X className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700" />
         </button>
 
         {/* Header Section */}
-        <div className="px-8 sm:px-10 pt-8 sm:pt-10 pb-6 sm:pb-8 border-b border-gray-100 bg-gradient-to-b from-gray-50 to-white">
-          <div className="pr-10">
+        <div className="px-6 sm:px-8 md:px-10 pt-6 sm:pt-8 md:pt-10 pb-5 sm:pb-6 md:pb-8 border-b border-gray-100 bg-gradient-to-b from-gray-50 to-white flex-shrink-0">
+          <div className="pr-8 sm:pr-10">
             <h2 className="text-3xl sm:text-4xl font-bold text-black mb-5 sm:mb-6 leading-tight tracking-tight">
               Win a Complimentary 6-Page Website
             </h2>
@@ -186,9 +200,12 @@ export default function HubSpotCTAPopup() {
         {/* HubSpot Form Container */}
         <div
           id="hubspot-form-container"
-          className="w-full px-8 sm:px-10 py-6 sm:py-8 flex-1 overflow-y-auto"
+          className="w-full px-6 sm:px-8 md:px-10 py-5 sm:py-6 md:py-8 flex-1 overflow-y-auto"
           style={{
-            minHeight: "400px",
+            minHeight: "300px",
+            maxHeight: "calc(100vh - 400px)",
+            WebkitOverflowScrolling: "touch",
+            overflowY: "auto"
           }}
         >
           {/* Loading indicator */}
