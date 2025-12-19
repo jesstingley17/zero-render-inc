@@ -37,7 +37,23 @@ This creates: `blog.zero-render.com` → `hubspot.com`
      - **Value:** `blog.zero-render.com`
 4. Click **Deploy**
 
-### 3. Keep Starlight on hub.zero-render.com
+### 3. Configure HubSpot (Optional but Recommended)
+
+**In HubSpot Dashboard:**
+
+HubSpot should automatically detect the reverse proxy once DNS and headers are configured, but you can verify/configure it:
+
+1. Go to **Settings** → **Website** → **Domains & URLs**
+2. Look for **Reverse Proxy** section
+3. HubSpot will automatically validate `blog.zero-render.com` when you visit:
+   ```
+   https://blog.zero-render.com/hubfs/hs-reverse-proxy-validation-test
+   ```
+4. Once validated, HubSpot will recognize the reverse proxy
+
+**Note:** HubSpot validates the reverse proxy automatically - you don't need to manually add it in most cases. The validation happens when you visit the test URL.
+
+### 4. Keep Starlight on hub.zero-render.com
 
 ✅ **No changes needed** - Keep `hub.zero-render.com` pointing to Starlight Hyperlift Manager as it is.
 
@@ -69,14 +85,16 @@ After DNS propagates (24-48 hours):
 - ✅ `blog.zero-render.com` → **HubSpot** (new CNAME record)
 - ✅ Cloudflare Transform Rule for `blog.zero-render.com` (add header)
 - ✅ Code updated to use `blog.zero-render.com`
+- ✅ HubSpot will auto-validate (no manual config usually needed)
 
 ## Next Steps
 
-1. Add the DNS CNAME record for `blog.zero-render.com`
-2. Create the Cloudflare Transform Rule
-3. Wait for DNS propagation
-4. Test the reverse proxy validation URL
-5. Check that blog images load correctly
+1. ✅ Add the DNS CNAME record for `blog.zero-render.com` → `hubspot.com`
+2. ✅ Create the Cloudflare Transform Rule (add `X-HS-Public-Host` header)
+3. ⏳ Wait for DNS propagation (24-48 hours)
+4. ✅ Test the reverse proxy validation URL: `https://blog.zero-render.com/hubfs/hs-reverse-proxy-validation-test`
+5. ✅ HubSpot will automatically validate and recognize the reverse proxy
+6. ✅ Check that blog images load correctly from `blog.zero-render.com`
 
 That's it! 🎉
 
