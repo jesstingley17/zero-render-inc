@@ -148,41 +148,45 @@ export default function HubSpotCTAPopup() {
       onClick={handleClose}
     >
       <div
-        className="bg-white rounded-lg w-full max-w-[700px] max-h-[90vh] overflow-auto relative flex flex-col"
+        className="bg-white rounded-lg w-full max-w-[700px] max-h-[90vh] overflow-hidden relative flex flex-col shadow-2xl"
         onClick={(e) => e.stopPropagation()}
         style={{ maxHeight: "90vh" }}
       >
         {/* Close Button */}
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 z-20 w-8 h-8 flex items-center justify-center bg-black/10 hover:bg-black/20 rounded-full transition-colors"
+          className="absolute top-5 right-5 z-20 w-9 h-9 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded-full transition-all duration-200 shadow-sm"
           aria-label="Close popup"
         >
-          <X className="w-5 h-5 text-black" />
+          <X className="w-5 h-5 text-gray-700" />
         </button>
 
         {/* Header Section */}
-        <div className="px-6 sm:px-8 pt-6 sm:pt-8 pb-4 border-b border-gray-200">
-          <h2 className="text-2xl sm:text-3xl font-bold text-black mb-4">
-            Win a Complimentary 6-Page Website
-          </h2>
-          <div className="space-y-4 text-base sm:text-lg text-gray-700 leading-relaxed">
-            <p>
-              We are offering one business the opportunity to receive a complimentary, fully custom six-page website—designed, developed, and launched by ZeroRender, Inc.
-            </p>
-            <p>
-              This is not a template or demo build. The selected business will receive a modern, mobile-responsive website structured for clarity, performance, and real-world usability. The initiative reflects our studio's standards and approach to digital work, while providing a meaningful upgrade to a business positioned for growth.
-            </p>
-            <p className="font-semibold text-gray-900">
-              Entry is free. One business will be selected through a randomized drawing and contacted directly.
-            </p>
+        <div className="px-8 sm:px-10 pt-8 sm:pt-10 pb-6 sm:pb-8 border-b border-gray-100 bg-gradient-to-b from-gray-50 to-white">
+          <div className="pr-10">
+            <h2 className="text-3xl sm:text-4xl font-bold text-black mb-5 sm:mb-6 leading-tight tracking-tight">
+              Win a Complimentary 6-Page Website
+            </h2>
+            <div className="space-y-4 text-base sm:text-lg text-gray-700 leading-relaxed">
+              <p className="text-gray-800">
+                We are offering one business the opportunity to receive a complimentary, fully custom six-page website—designed, developed, and launched by ZeroRender, Inc.
+              </p>
+              <p className="text-gray-700">
+                This is not a template or demo build. The selected business will receive a modern, mobile-responsive website structured for clarity, performance, and real-world usability. The initiative reflects our studio's standards and approach to digital work, while providing a meaningful upgrade to a business positioned for growth.
+              </p>
+              <div className="mt-5 pt-4 border-t border-gray-200">
+                <p className="font-semibold text-gray-900 text-lg">
+                  Entry is free. One business will be selected through a randomized drawing and contacted directly.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* HubSpot Form Container */}
         <div
           id="hubspot-form-container"
-          className="w-full p-6 sm:p-8 flex-1"
+          className="w-full px-8 sm:px-10 py-6 sm:py-8 flex-1 overflow-y-auto"
           style={{
             minHeight: "400px",
           }}
@@ -190,8 +194,8 @@ export default function HubSpotCTAPopup() {
           {/* Loading indicator */}
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-black mb-4"></div>
-              <p className="text-sm text-gray-600">Loading form...</p>
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-2 border-gray-300 border-t-black mb-4"></div>
+              <p className="text-sm text-gray-600 font-medium">Loading form...</p>
             </div>
           </div>
         </div>
