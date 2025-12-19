@@ -1,6 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server"
 
-export const dynamic = "force-dynamic"
+// Cache blog posts for 5 minutes (300 seconds)
+// This significantly improves load times
+export const revalidate = 300
 export const runtime = "nodejs"
 
 // HubSpot Blog Integration - Fetches blog posts from HubSpot Content API
@@ -520,7 +522,12 @@ export async function GET(request: NextRequest) {
 
       // Remove debug fields before returning
       const { originalSlug, originalId, originalUrl, ...postData } = post as any
-      return NextResponse.json({ post: postData })
+      
+      // Add cache headers for better performance
+      const response = NextResponse.json({ post: postData })
+      response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600')
+      
+      return response
     }
 
     // Otherwise, fetch all posts
@@ -539,7 +546,11 @@ export async function GET(request: NextRequest) {
       console.log('Sample post title:', cleanedPosts[0].title)
     }
 
-    return NextResponse.json({ posts: cleanedPosts })
+    // Add cache headers for better performance
+    const response = NextResponse.json({ posts: cleanedPosts })
+    response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600')
+    
+    return response
   } catch (error) {
     console.error("Blog API error:", error)
     return NextResponse.json(

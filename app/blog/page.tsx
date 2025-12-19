@@ -32,7 +32,11 @@ export default function BlogPage() {
     async function fetchPosts() {
       try {
         setLoading(true)
-        const response = await fetch("/api/hubspot/blog")
+        // Use Next.js fetch with cache revalidation
+        // The API route has revalidate=300, so this will use cached data when available
+        const response = await fetch("/api/hubspot/blog", {
+          next: { revalidate: 300 }, // Cache for 5 minutes
+        })
         const data = await response.json()
 
         if (!response.ok) {
@@ -171,8 +175,24 @@ export default function BlogPage() {
 
           {/* Loading State */}
           {loading && (
-            <div className="text-center py-16 sm:py-20 md:py-24">
-              <p className="text-lg sm:text-xl text-zinc-400">Loading blog posts...</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 md:gap-12">
+              {[...Array(6)].map((_, i) => (
+                <div
+                  key={i}
+                  className="border border-white/10 bg-white/5 animate-pulse"
+                >
+                  <div className="aspect-video bg-zinc-800" />
+                  <div className="p-6 sm:p-8 space-y-4">
+                    <div className="h-4 w-20 bg-zinc-800 rounded" />
+                    <div className="h-8 bg-zinc-800 rounded" />
+                    <div className="h-4 bg-zinc-800 rounded" />
+                    <div className="h-4 bg-zinc-800 rounded w-3/4" />
+                    <div className="pt-4 border-t border-white/10">
+                      <div className="h-4 bg-zinc-800 rounded w-1/2" />
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
 
