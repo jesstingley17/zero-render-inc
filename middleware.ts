@@ -9,6 +9,27 @@ import type { NextRequest } from "next/server"
  * for it to work properly with HubSpot's validation.
  */
 export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
+  
+  // Block common WordPress/security scanner paths
+  const blockedPaths = [
+    '/wp-admin',
+    '/wp-login.php',
+    '/wp-config.php',
+    '/wp-content',
+    '/wp-includes',
+    '/xmlrpc.php',
+    '/.env',
+    '/.git',
+    '/phpmyadmin',
+    '/admin',
+    '/administrator',
+  ]
+  
+  if (blockedPaths.some(path => pathname.startsWith(path))) {
+    return new NextResponse('Not Found', { status: 404 })
+  }
+
   // Check if this is a request to blog.zero-render.com (HubSpot reverse proxy)
   const host = request.headers.get("host")
   const isHubspotProxy = host?.includes("blog.zero-render.com")
