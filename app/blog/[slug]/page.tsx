@@ -277,8 +277,11 @@ export default function BlogPostPage() {
                         alt={post.author}
                         fill
                         className="object-cover"
-                        onError={() => setAuthorAvatarError(true)}
-                        unoptimized
+                        unoptimized={post.authorAvatar?.startsWith('http') || false}
+                        onError={() => {
+                          console.log('Author avatar failed to load:', post.authorAvatar)
+                          setAuthorAvatarError(true)
+                        }}
                       />
                     </div>
                   </Link>
