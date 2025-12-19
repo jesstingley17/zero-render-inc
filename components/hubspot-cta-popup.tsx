@@ -56,60 +56,93 @@ export default function HubSpotCTAPopup() {
       #hubspot-form-container {
         width: 100% !important;
         max-width: 100% !important;
+        box-sizing: border-box !important;
+      }
+      #hubspot-form-container * {
+        box-sizing: border-box !important;
       }
       #hubspot-form-container form {
         width: 100% !important;
         max-width: 100% !important;
         padding: 0 !important;
+        margin: 0 !important;
       }
       #hubspot-form-container .hs-form-field {
         width: 100% !important;
         max-width: 100% !important;
-        margin-bottom: 1rem !important;
+        margin-bottom: 1.25rem !important;
+        display: block !important;
+      }
+      #hubspot-form-container .hs-form-field > label {
+        width: 100% !important;
+        max-width: 100% !important;
+        display: block !important;
+        margin-bottom: 0.5rem !important;
       }
       #hubspot-form-container .hs-input,
       #hubspot-form-container input[type="text"],
       #hubspot-form-container input[type="email"],
       #hubspot-form-container input[type="tel"],
+      #hubspot-form-container input[type="number"],
       #hubspot-form-container textarea,
       #hubspot-form-container select {
         width: 100% !important;
         max-width: 100% !important;
         box-sizing: border-box !important;
         font-size: 16px !important;
-        padding: 0.75rem !important;
+        padding: 0.875rem !important;
         border-radius: 0.375rem !important;
+        margin: 0 !important;
+        display: block !important;
       }
       #hubspot-form-container .hs-submit {
         width: 100% !important;
         max-width: 100% !important;
+        margin-top: 1rem !important;
       }
-      #hubspot-form-container .hs-button {
+      #hubspot-form-container .hs-submit .hs-button {
         width: 100% !important;
         max-width: 100% !important;
         padding: 0.875rem 1.5rem !important;
         font-size: 1rem !important;
+        box-sizing: border-box !important;
       }
       #hubspot-form-container iframe {
         width: 100% !important;
         max-width: 100% !important;
+        box-sizing: border-box !important;
       }
       @media (max-width: 640px) {
         #hubspot-form-container {
-          padding-left: 0.5rem !important;
-          padding-right: 0.5rem !important;
+          padding-left: 0 !important;
+          padding-right: 0 !important;
+        }
+        #hubspot-form-container form {
+          padding: 0 !important;
         }
         #hubspot-form-container .hs-form-field {
-          margin-bottom: 1.25rem !important;
+          margin-bottom: 1.5rem !important;
+          padding: 0 !important;
         }
         #hubspot-form-container .hs-input,
         #hubspot-form-container input[type="text"],
         #hubspot-form-container input[type="email"],
         #hubspot-form-container input[type="tel"],
+        #hubspot-form-container input[type="number"],
         #hubspot-form-container textarea,
         #hubspot-form-container select {
           font-size: 16px !important;
-          padding: 0.875rem !important;
+          padding: 1rem !important;
+          width: 100% !important;
+          max-width: 100% !important;
+        }
+        #hubspot-form-container .hs-submit {
+          width: 100% !important;
+          margin: 1.5rem 0 0 0 !important;
+        }
+        #hubspot-form-container .hs-submit .hs-button {
+          width: 100% !important;
+          padding: 1rem 1.5rem !important;
         }
       }
     `
@@ -281,14 +314,16 @@ export default function HubSpotCTAPopup() {
         {/* HubSpot Form Container */}
         <div
           id="hubspot-form-container"
-          className="w-full px-4 sm:px-6 md:px-8 lg:px-10 py-4 sm:py-5 md:py-6 lg:py-8 flex-1 overflow-y-auto"
+          className="w-full px-4 sm:px-6 md:px-8 lg:px-10 py-4 sm:py-5 md:py-6 lg:py-8 flex-1"
           style={{
             minHeight: "300px",
-            maxHeight: "calc(100vh - 400px)",
+            maxHeight: "calc(100vh - 350px)",
             WebkitOverflowScrolling: "touch",
             overflowY: "auto",
+            overflowX: "hidden",
             width: "100%",
-            boxSizing: "border-box"
+            boxSizing: "border-box",
+            position: "relative"
           }}
         >
           {/* Loading indicator */}
