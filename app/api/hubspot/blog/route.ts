@@ -118,35 +118,55 @@ async function fetchHubSpotAuthorAvatar(authorName: string): Promise<string | nu
   }
 
   try {
-    // Try to fetch from Blog Authors API
-    const response = await fetch(
-      `https://api.hubapi.com/content/api/v2/blog-authors?name=${encodeURIComponent(authorName)}`,
-      {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-        },
-      }
-    )
+    // Try to fetch from Blog Authors API - try both name and email search
+    const searchQueries = [
+      `name=${encodeURIComponent(authorName)}`,
+      `email=${encodeURIComponent(authorName)}`, // In case authorName is an email
+    ]
+    
+    for (const query of searchQueries) {
+      try {
+        const response = await fetch(
+          `https://api.hubapi.com/content/api/v2/blog-authors?${query}`,
+          {
+            headers: {
+              Authorization: `Bearer ${apiKey}`,
+              "Content-Type": "application/json",
+            },
+            signal: AbortSignal.timeout(5000), // 5 second timeout
+          }
+        )
 
-    if (response.ok) {
-      const data = await response.json()
-      if (data.objects && data.objects.length > 0) {
-        const author = data.objects[0]
-        // Check multiple possible fields for avatar
-        const avatar = author.avatar || 
-                      author.avatarUrl || 
-                      author.image || 
-                      author.profileImage ||
-                      author.avatar_url ||
-                      author.profile_image ||
-                      null
-        return avatar ? rewriteHubSpotUrl(avatar) : null
+        if (response.ok) {
+          const data = await response.json()
+          if (data.objects && data.objects.length > 0) {
+            const author = data.objects[0]
+            // Check multiple possible fields for avatar
+            const avatar = author.avatar || 
+                          author.avatarUrl || 
+                          author.avatar_url ||
+                          author.image || 
+                          author.profileImage ||
+                          author.profile_image ||
+                          author.profilePicture ||
+                          author.profile_picture ||
+                          null
+            
+            if (avatar) {
+              return rewriteHubSpotUrl(avatar)
+            }
+          }
+        }
+      } catch (fetchError) {
+        // Continue to next query
+        continue
       }
     }
   } catch (error) {
     // Silently fail - author avatar is optional
-    console.debug("Could not fetch author avatar from HubSpot:", error)
+    if (process.env.NODE_ENV !== 'production') {
+      console.debug("Could not fetch author avatar from HubSpot:", error)
+    }
   }
 
   return null
@@ -320,6 +340,16 @@ export function transformHubSpotPost(post: HubSpotBlogPost) {
                 post.blog_author ||
                 "ZeroRender Team"
 
+  // Extract author name first (needed for fallback)
+  const author = post.blogAuthorDisplayName || 
+                 post.blog_author_display_name ||
+                 post.authorName || 
+                 post.author_name ||
+                 post.author ||
+                 post.blogAuthor ||
+                 post.blog_author ||
+                 "ZeroRender Team"
+  
   // Extract author avatar/profile picture - check multiple field names and nested objects
   let authorAvatar = post.blogAuthorAvatar ||
                       post.blog_author_avatar ||
@@ -329,29 +359,45 @@ export function transformHubSpotPost(post: HubSpotBlogPost) {
                       post.author_image ||
                       post.authorProfileImage ||
                       post.author_profile_image ||
+                      post.blogAuthorImage ||
+                      post.blog_author_image ||
+                      post.blogAuthorProfileImage ||
+                      post.blog_author_profile_image ||
                       (typeof post.blogAuthor === 'object' && post.blogAuthor?.avatar) ||
                       (typeof post.blogAuthor === 'object' && post.blogAuthor?.image) ||
                       (typeof post.blogAuthor === 'object' && post.blogAuthor?.avatarUrl) ||
+                      (typeof post.blogAuthor === 'object' && post.blogAuthor?.profileImage) ||
                       (typeof post.author === 'object' && post.author?.avatar) ||
                       (typeof post.author === 'object' && post.author?.image) ||
                       null
+  
+  // Debug logging (only in development)
+  if (process.env.NODE_ENV !== 'production' && !authorAvatar) {
+    console.log('Author avatar not found in post data. Author:', author)
+    console.log('Available author-related fields:', Object.keys(post).filter(k => 
+      k.toLowerCase().includes('author') || k.toLowerCase().includes('avatar') || k.toLowerCase().includes('image')
+    ))
+  }
   
   // Rewrite author avatar URL to use reverse proxy
   if (authorAvatar) {
     authorAvatar = rewriteHubSpotUrl(authorAvatar)
   } else {
     // Fallback: Try to get from local image map
-    const author = post.blogAuthorDisplayName || 
-                   post.blog_author_display_name ||
-                   post.authorName || 
-                   post.author_name ||
-                   post.author ||
-                   post.blogAuthor ||
-                   post.blog_author ||
-                   "ZeroRender Team"
-    
-    if (typeof author === 'string' && AUTHOR_IMAGE_MAP[author]) {
-      authorAvatar = AUTHOR_IMAGE_MAP[author]
+    const authorName = typeof author === 'string' ? author : String(author)
+    if (AUTHOR_IMAGE_MAP[authorName]) {
+      authorAvatar = AUTHOR_IMAGE_MAP[authorName]
+    } else {
+      // Try partial matches (e.g., "Jessica-Lee Tingley" matches "Jessica Lee Tingley")
+      const normalizedAuthor = authorName.toLowerCase().trim()
+      for (const [key, value] of Object.entries(AUTHOR_IMAGE_MAP)) {
+        if (key.toLowerCase().trim() === normalizedAuthor || 
+            normalizedAuthor.includes(key.toLowerCase().trim()) ||
+            key.toLowerCase().trim().includes(normalizedAuthor)) {
+          authorAvatar = value
+          break
+        }
+      }
     }
   }
 
