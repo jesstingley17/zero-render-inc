@@ -177,6 +177,8 @@ const AUTHOR_IMAGE_MAP: Record<string, string> = {
   "Jessica-Lee Tingley": "/jessica-lee-tingley.jpg",
   "Jessica Lee Tingley": "/jessica-lee-tingley.jpg",
   "Tyler Plymale": "/tyler-plymale.jpg",
+  "Kara Khechimmadi": "/images/img-3352.jpeg",
+  "Ali Abdulaati": "/images/img-3207-2.jpg",
   "ZeroRender Team": "/logo_bw_inverted.png",
 }
 
