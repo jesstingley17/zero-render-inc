@@ -232,8 +232,7 @@ export default function Page() {
           </h1>
 
           <p className="text-base sm:text-lg md:text-xl text-white/60 max-w-2xl mx-auto leading-relaxed mb-10 sm:mb-11 md:mb-12 px-1">
-            ZeroRender is a design-tech startup building modern, AI-powered digital experiences for small businesses.
-            Enterprise-level tools without the complexity or cost.
+            ZeroRender is a modern design and technology studio building human-designed websites, brands, and digital products. We equip startups and small businesses with sophisticated, intelligent digital experiences, providing enterprise-level tools without the associated complexity or cost.
           </p>
         </div>
 
@@ -245,17 +244,18 @@ export default function Page() {
       {/* Expertise */}
       <section id="expertise" className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 md:px-8">
         <div className="container mx-auto max-w-6xl">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-12 sm:mb-14 md:mb-16 text-center">
-            Our Expertise
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-6 sm:mb-8 md:mb-10 text-center">
+            Our Services as a Leading Digital Design Agency
           </h2>
+          <p className="text-base sm:text-lg md:text-xl text-zinc-400 max-w-3xl mx-auto text-center leading-relaxed mb-12 sm:mb-14 md:mb-16">
+            As a full-service digital design agency, we offer a comprehensive suite of solutions tailored to elevate your brand and accelerate your growth. Our expertise is focused on delivering tangible results and a significant return on investment.
+          </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 md:gap-8">
             {[
-              { title: "Web Design", desc: "Beautiful, responsive websites that convert" },
-              { title: "Brand Identity", desc: "Cohesive visual systems for your business" },
-              { title: "AI Integration", desc: "Smart automation for workflows" },
-              { title: "SEO Optimization", desc: "Get found by your ideal customers" },
-              { title: "Fast Development", desc: "Launch quickly without sacrificing quality" },
-              { title: "Ongoing Support", desc: "We're here when you need us" },
+              { title: "Website Design & Development", desc: "We craft beautiful, responsive websites that not only capture attention but are engineered to convert visitors into customers." },
+              { title: "Brand Identity", desc: "Our team develops cohesive visual systems and strategic messaging that define your business and resonate with your target audience." },
+              { title: "AI Integration", desc: "We implement intelligent automation and advanced tools into your workflows, enhancing efficiency and creating smarter digital experiences." },
+              { title: "SEO Optimization", desc: "We ensure your business gets found by ideal customers through meticulous search engine optimization strategies." },
             ].map((item) => (
               <div
                 key={item.title}
@@ -272,26 +272,29 @@ export default function Page() {
       {/* Approach */}
       <section id="approach" className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 md:px-8 bg-zinc-950">
         <div className="container mx-auto max-w-6xl">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-12 sm:mb-14 md:mb-16 text-center">
-            Our Approach
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-6 sm:mb-8 md:mb-10 text-center">
+            Our Strategic Approach
           </h2>
+          <p className="text-base sm:text-lg md:text-xl text-zinc-400 max-w-3xl mx-auto text-center leading-relaxed mb-12 sm:mb-14 md:mb-16">
+            Our methodology is built on a foundation of strategy, execution, and partnership, ensuring every project we undertake is positioned for success from the outset.
+          </p>
           <div className="space-y-8 sm:space-y-10 md:space-y-12">
             <div className="border border-white/10 p-6 sm:p-8 hover:bg-white/5 transition-colors">
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">Discovery & Strategy</h3>
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">Discovery and Strategy</h3>
               <p className="text-sm sm:text-base text-zinc-400 leading-relaxed">
-                We start by understanding your business goals, target audience, and unique challenges to create a tailored solution that drives results.
+                We begin every engagement by thoroughly understanding your business objectives, target market, and specific challenges. This allows our web design studio to formulate a bespoke strategy that drives measurable results and aligns perfectly with your vision.
               </p>
             </div>
             <div className="border border-white/10 p-6 sm:p-8 hover:bg-white/5 transition-colors">
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">Design & Development</h3>
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">Design and Development</h3>
               <p className="text-sm sm:text-base text-zinc-400 leading-relaxed">
-                Creating beautiful, functional solutions with cutting-edge technology. We combine modern design principles with AI-powered tools to deliver exceptional experiences.
+                Our team combines modern design principles with cutting-edge technology. As a forward-thinking branding studio, we create beautiful and functional solutions, leveraging AI-powered tools to deliver exceptional digital products that set you apart from the competition.
               </p>
             </div>
             <div className="border border-white/10 p-6 sm:p-8 hover:bg-white/5 transition-colors">
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">Launch & Scale</h3>
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">Launch and Growth</h3>
               <p className="text-sm sm:text-base text-zinc-400 leading-relaxed">
-                Ongoing support to help your business grow and adapt. We're here for the long haul, ensuring your digital presence evolves with your business.
+                We provide robust, ongoing support to help your business grow and adapt in a dynamic market. We are committed to a long-term partnership, ensuring your digital presence evolves with your business and continues to perform at its peak.
               </p>
             </div>
           </div>
