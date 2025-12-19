@@ -1,9 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { rewriteHubSpotUrl, rewriteHubSpotContent } from "@/lib/hubspot-proxy"
 
-// Cache blog posts for 5 minutes (300 seconds)
-// This significantly improves load times
-export const revalidate = 300
+// Force dynamic rendering since we use request.url
+export const dynamic = "force-dynamic"
 export const runtime = "nodejs"
 
 // HubSpot Blog Integration - Fetches blog posts from HubSpot Content API
