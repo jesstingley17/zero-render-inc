@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Menu, X, ArrowLeft, Calendar, Clock, Share2 } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 import { useParams } from "next/navigation"
 
 interface BlogPost {
@@ -30,6 +31,7 @@ export default function BlogPostPage() {
   const [post, setPost] = useState<BlogPost | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [authorAvatarError, setAuthorAvatarError] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50)
@@ -264,16 +266,21 @@ export default function BlogPostPage() {
           <div className="mb-8 sm:mb-10 md:mb-12 pb-8 border-b border-white/10">
             <div className="bg-white/5 border border-white/10 p-6 sm:p-8 rounded-lg">
               <div className="flex items-start gap-4 sm:gap-6">
-                {post.authorAvatar ? (
+                {post.authorAvatar && !authorAvatarError ? (
                   <Link
                     href={`/about#${post.author.toLowerCase().replace(/\s+/g, '-')}`}
                     className="block flex-shrink-0 hover:opacity-80 transition-opacity"
                   >
-                    <img
-                      src={post.authorAvatar}
-                      alt={post.author}
-                      className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-white/20"
-                    />
+                    <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-2 border-white/20">
+                      <Image
+                        src={post.authorAvatar}
+                        alt={post.author}
+                        fill
+                        className="object-cover"
+                        onError={() => setAuthorAvatarError(true)}
+                        unoptimized
+                      />
+                    </div>
                   </Link>
                 ) : (
                   <Link
