@@ -186,7 +186,7 @@ export default function HubSpotCTAPopup() {
 
       retryCount++
       if (retryCount < maxRetries) {
-        setTimeout(tryInitialize, 300)
+        setTimeout(tryInitialize, 100) // Reduced from 300ms to 100ms for faster retries
       } else {
         console.error("Failed to initialize HubSpot form after multiple attempts")
       }
@@ -198,11 +198,11 @@ export default function HubSpotCTAPopup() {
     if (existingScript) {
       // Script exists, wait for it to be ready
       if ((window as any).hbspt && (window as any).hbspt.forms) {
-        setTimeout(tryInitialize, 200)
+        setTimeout(tryInitialize, 50) // Reduced delay
       } else {
-        existingScript.onload = () => setTimeout(tryInitialize, 200)
+        existingScript.onload = () => setTimeout(tryInitialize, 50)
         if (existingScript.complete || existingScript.readyState === "complete") {
-          setTimeout(tryInitialize, 200)
+          setTimeout(tryInitialize, 50)
         }
       }
     } else {
@@ -216,7 +216,7 @@ export default function HubSpotCTAPopup() {
       
       script.onload = () => {
         // Wait a bit for script to initialize, then try to create form
-        setTimeout(tryInitialize, 500)
+        setTimeout(tryInitialize, 200) // Reduced from 500ms to 200ms
       }
       
       script.onerror = () => {
@@ -235,7 +235,7 @@ export default function HubSpotCTAPopup() {
 
   return (
     <div
-      className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4 overflow-y-auto"
+      className="fixed inset-0 z-[100] bg-black/80 flex items-start justify-center p-2 sm:p-4 overflow-y-auto"
       onClick={handleClose}
       style={{ 
         position: "fixed",
@@ -243,17 +243,20 @@ export default function HubSpotCTAPopup() {
         left: 0,
         right: 0,
         bottom: 0,
-        WebkitOverflowScrolling: "touch"
+        WebkitOverflowScrolling: "touch",
+        paddingTop: "1rem",
+        paddingBottom: "1rem"
       }}
     >
       <div
-        className="bg-white rounded-lg w-full max-w-[700px] my-8 relative flex flex-col shadow-2xl"
+        className="bg-white rounded-lg w-full max-w-[700px] my-4 sm:my-8 relative flex flex-col shadow-2xl"
         onClick={(e) => e.stopPropagation()}
         style={{ 
-          maxHeight: "calc(100vh - 4rem)",
-          margin: "2rem auto",
+          maxHeight: "calc(100vh - 2rem)",
+          margin: "1rem auto",
           display: "flex",
-          flexDirection: "column"
+          flexDirection: "column",
+          overflow: "hidden"
         }}
       >
         {/* Close Button */}
@@ -291,12 +294,14 @@ export default function HubSpotCTAPopup() {
         {/* HubSpot Form Container */}
         <div
           id="hubspot-form-container"
-          className="w-full px-4 sm:px-6 md:px-8 lg:px-10 py-4 sm:py-5 md:py-6 lg:py-8"
+          className="w-full px-4 sm:px-6 md:px-8 lg:px-10 py-4 sm:py-5 md:py-6 lg:py-8 flex-1 overflow-y-auto"
           style={{
             minHeight: "200px",
             width: "100%",
             boxSizing: "border-box",
-            position: "relative"
+            position: "relative",
+            WebkitOverflowScrolling: "touch",
+            maxHeight: "calc(100vh - 450px)"
           }}
         >
           {/* Loading indicator */}
