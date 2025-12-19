@@ -111,7 +111,7 @@ export default function Page() {
       >
         <div className="container mx-auto px-4 sm:px-6 md:px-8 h-16 sm:h-18 md:h-20 flex items-center justify-between">
           <a href="/" className="block transition-opacity hover:opacity-70 duration-300">
-            <img src="/logo_bw_inverted.png" alt="ZeroRender" className="h-7 sm:h-10 md:h-12 w-auto" />
+            <img src="/logo_bw_inverted.png" alt="ZeroRender" className="h-7 sm:h-10 md:h-12 w-auto" loading="eager" fetchPriority="high" />
           </a>
 
           <nav className="hidden md:flex items-center space-x-6 lg:space-x-8">
