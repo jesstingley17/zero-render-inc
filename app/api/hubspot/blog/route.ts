@@ -101,6 +101,57 @@ async function fetchHubSpotBlogPostById(postId: string) {
   }
 }
 
+// Helper function to fetch author avatar from HubSpot Blog Authors API
+async function fetchHubSpotAuthorAvatar(authorName: string): Promise<string | null> {
+  const apiKey = process.env.HUBSPOT_API_KEY
+
+  if (!apiKey || !authorName) {
+    return null
+  }
+
+  try {
+    // Try to fetch from Blog Authors API
+    const response = await fetch(
+      `https://api.hubapi.com/content/api/v2/blog-authors?name=${encodeURIComponent(authorName)}`,
+      {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+      }
+    )
+
+    if (response.ok) {
+      const data = await response.json()
+      if (data.objects && data.objects.length > 0) {
+        const author = data.objects[0]
+        // Check multiple possible fields for avatar
+        const avatar = author.avatar || 
+                      author.avatarUrl || 
+                      author.image || 
+                      author.profileImage ||
+                      author.avatar_url ||
+                      author.profile_image ||
+                      null
+        return avatar ? rewriteHubSpotUrl(avatar) : null
+      }
+    }
+  } catch (error) {
+    // Silently fail - author avatar is optional
+    console.debug("Could not fetch author avatar from HubSpot:", error)
+  }
+
+  return null
+}
+
+// Map author names to local images as fallback
+const AUTHOR_IMAGE_MAP: Record<string, string> = {
+  "Jessica-Lee Tingley": "/jessica-lee-tingley.jpg",
+  "Jessica Lee Tingley": "/jessica-lee-tingley.jpg",
+  "Tyler Plymale": "/tyler-plymale.jpg",
+  "ZeroRender Team": "/logo_bw_inverted.png",
+}
+
 // Extract slug from HubSpot URL or use provided slug
 function extractSlugFromHubSpotPost(post: HubSpotBlogPost): string {
   // First, try the slug field (HubSpot's native slug)
@@ -267,14 +318,33 @@ export function transformHubSpotPost(post: HubSpotBlogPost) {
                       post.authorAvatar ||
                       post.author_avatar ||
                       post.authorImage ||
+                      post.author_image ||
+                      post.authorProfileImage ||
+                      post.author_profile_image ||
                       (typeof post.blogAuthor === 'object' && post.blogAuthor?.avatar) ||
                       (typeof post.blogAuthor === 'object' && post.blogAuthor?.image) ||
+                      (typeof post.blogAuthor === 'object' && post.blogAuthor?.avatarUrl) ||
                       (typeof post.author === 'object' && post.author?.avatar) ||
+                      (typeof post.author === 'object' && post.author?.image) ||
                       null
   
   // Rewrite author avatar URL to use reverse proxy
   if (authorAvatar) {
     authorAvatar = rewriteHubSpotUrl(authorAvatar)
+  } else {
+    // Fallback: Try to get from local image map
+    const author = post.blogAuthorDisplayName || 
+                   post.blog_author_display_name ||
+                   post.authorName || 
+                   post.author_name ||
+                   post.author ||
+                   post.blogAuthor ||
+                   post.blog_author ||
+                   "ZeroRender Team"
+    
+    if (typeof author === 'string' && AUTHOR_IMAGE_MAP[author]) {
+      authorAvatar = AUTHOR_IMAGE_MAP[author]
+    }
   }
 
   // Extract author bio - check multiple field names and nested objects
@@ -459,8 +529,12 @@ export async function GET(request: NextRequest) {
                                   fullPost.authorAvatar ||
                                   fullPost.author_avatar ||
                                   fullPost.authorImage ||
+                                  fullPost.author_image ||
+                                  fullPost.authorProfileImage ||
+                                  fullPost.author_profile_image ||
                                   fullPost.blogAuthor?.avatar ||
                                   fullPost.blogAuthor?.image ||
+                                  fullPost.blogAuthor?.avatarUrl ||
                                   fullPost.author?.avatar ||
                                   fullPost.author?.image ||
                                   fullPost.blog_author?.avatar ||
@@ -470,6 +544,27 @@ export async function GET(request: NextRequest) {
           if (fullAuthorAvatar && !post.authorAvatar) {
             // Rewrite author avatar URL to use reverse proxy
             post.authorAvatar = rewriteHubSpotUrl(fullAuthorAvatar)
+          } else if (!post.authorAvatar) {
+            // Try to fetch from Blog Authors API as fallback
+            const authorName = post.author || fullPost.blogAuthorDisplayName || fullPost.authorName
+            if (authorName) {
+              try {
+                const fetchedAvatar = await fetchHubSpotAuthorAvatar(authorName)
+                if (fetchedAvatar) {
+                  post.authorAvatar = fetchedAvatar
+                } else {
+                  // Final fallback: use local image map
+                  if (AUTHOR_IMAGE_MAP[authorName]) {
+                    post.authorAvatar = AUTHOR_IMAGE_MAP[authorName]
+                  }
+                }
+              } catch (error) {
+                // If fetch fails, try local image map
+                if (authorName && AUTHOR_IMAGE_MAP[authorName]) {
+                  post.authorAvatar = AUTHOR_IMAGE_MAP[authorName]
+                }
+              }
+            }
           }
 
           // Update author bio - check multiple possible field names and nested objects
