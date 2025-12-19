@@ -76,20 +76,20 @@ async function BlogPostsList() {
         <Link
           key={post.slug}
           href={`/blog/${post.slug}`}
-          className="group relative overflow-hidden border border-white/10 bg-white/5 hover:bg-white/10 transition-all duration-500 flex flex-col"
+          className="group relative overflow-hidden border border-white/10 bg-white/5 hover:bg-white/10 transition-all duration-500 flex flex-col cursor-pointer"
         >
           {/* Featured Image */}
           {post.featuredImage && (
             <div className="relative aspect-video overflow-hidden bg-zinc-900">
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10 pointer-events-none" />
               <Image
                 src={post.featuredImage}
                 alt={post.title}
                 fill
-                className="object-cover group-hover:scale-110 transition-transform duration-700"
+                className="object-cover group-hover:scale-110 transition-transform duration-700 pointer-events-none"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
-              <div className="absolute top-4 left-4 z-20">
+              <div className="absolute top-4 left-4 z-20 pointer-events-none">
                 <span className="inline-block px-3 py-1 text-xs uppercase tracking-widest bg-white/20 backdrop-blur-sm text-white border border-white/30">
                   {post.category}
                 </span>
