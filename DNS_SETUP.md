@@ -100,3 +100,4 @@ After configuring DNS:
 - Verify DNS is pointing to Vercel
 - Check browser console for errors
 
+

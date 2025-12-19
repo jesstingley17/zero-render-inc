@@ -270,8 +270,37 @@ export default function Page() {
         </div>
       </section>
 
+      {/* Approach */}
+      <section id="approach" className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 md:px-8 bg-zinc-950">
+        <div className="container mx-auto max-w-6xl">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-12 sm:mb-14 md:mb-16 text-center">
+            Our Approach
+          </h2>
+          <div className="space-y-8 sm:space-y-10 md:space-y-12">
+            <div className="border border-white/10 p-6 sm:p-8 hover:bg-white/5 transition-colors">
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">Discovery & Strategy</h3>
+              <p className="text-sm sm:text-base text-zinc-400 leading-relaxed">
+                We start by understanding your business goals, target audience, and unique challenges to create a tailored solution that drives results.
+              </p>
+            </div>
+            <div className="border border-white/10 p-6 sm:p-8 hover:bg-white/5 transition-colors">
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">Design & Development</h3>
+              <p className="text-sm sm:text-base text-zinc-400 leading-relaxed">
+                Creating beautiful, functional solutions with cutting-edge technology. We combine modern design principles with AI-powered tools to deliver exceptional experiences.
+              </p>
+            </div>
+            <div className="border border-white/10 p-6 sm:p-8 hover:bg-white/5 transition-colors">
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">Launch & Scale</h3>
+              <p className="text-sm sm:text-base text-zinc-400 leading-relaxed">
+                Ongoing support to help your business grow and adapt. We're here for the long haul, ensuring your digital presence evolves with your business.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Packages */}
-      <section id="packages" className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 md:px-8 bg-zinc-950">
+      <section id="packages" className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 md:px-8">
         <div className="container mx-auto max-w-7xl">
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-12 sm:mb-14 md:mb-16 text-center">
             Our Services
@@ -676,8 +705,22 @@ export default function Page() {
         </div>
       </section>
 
+      {/* Vision */}
+      <section id="vision" className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 md:px-8 bg-zinc-950">
+        <div className="container mx-auto max-w-4xl text-center">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-6 sm:mb-8 md:mb-10">
+            Our Vision
+          </h2>
+          <p className="text-base sm:text-lg md:text-xl text-zinc-400 leading-relaxed max-w-3xl mx-auto">
+            Empowering entrepreneurs with enterprise-grade digital tools that are accessible, affordable, and AI-powered. 
+            We believe every small business deserves the same level of technology and design excellence as the biggest companies, 
+            without the complexity or cost.
+          </p>
+        </div>
+      </section>
+
       {/* Testimonials Section */}
-      <section id="testimonials" className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 md:px-8 bg-zinc-950 border-t border-white/10">
+      <section id="testimonials" className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 md:px-8 border-t border-white/10">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12 sm:mb-14 md:mb-16">
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-4 sm:mb-5 md:mb-6">

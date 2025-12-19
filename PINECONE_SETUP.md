@@ -147,3 +147,4 @@ To customize, modify the `getPineconeIndex` function in `lib/pinecone.ts`.
 - [Pinecone JavaScript SDK](https://github.com/pinecone-io/pinecone-js-client)
 - [OpenAI Embeddings Guide](https://platform.openai.com/docs/guides/embeddings)
 
+

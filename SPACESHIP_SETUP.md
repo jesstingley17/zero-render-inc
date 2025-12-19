@@ -77,3 +77,4 @@ If you're not sure which approach to use, I recommend:
 2. If you prefer not to use Cloudflare, test Solution 2 (middleware) first
 3. If middleware doesn't work, you'll need a proxy service
 
+
