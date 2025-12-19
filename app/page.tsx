@@ -232,10 +232,10 @@ export default function Page() {
           </h1>
 
           <p className="text-base sm:text-lg md:text-xl text-white/60 max-w-2xl mx-auto leading-relaxed mb-6 sm:mb-8 px-1">
-            ZeroRender is a premier web design studio and full-service digital design agency specializing in modern website design, brand identity, and AI-powered digital solutions. Our web design studio creates custom websites that combine stunning visual design with intelligent technology, helping small businesses and startups establish a powerful online presence.
+            ZeroRender is a premier web design studio and digital design agency creating bespoke websites and brands. As a leading branding studio, we build digital products for startups.
           </p>
           <p className="text-base sm:text-lg md:text-xl text-white/60 max-w-2xl mx-auto leading-relaxed mb-10 sm:mb-11 md:mb-12 px-1">
-            As a leading branding studio and digital design agency, we deliver enterprise-level website design and development services without the complexity or high costs typically associated with large agencies. Our team of expert designers and developers crafts responsive websites, develops cohesive brand identities, and integrates cutting-edge AI tools that enhance your business operations and customer engagement.
+            Our web design studio creates custom websites that combine stunning visual design with intelligent technology, helping small businesses and startups establish a powerful online presence. As a full-service digital design agency, we deliver enterprise-level website design and development services without the complexity or high costs typically associated with large agencies.
           </p>
         </div>
 

@@ -12,9 +12,9 @@ const geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.zero-render.com"),
-  title: "ZeroRender - AI-Powered Digital Experiences for Small Business",
+  title: "ZeroRender - Premier Web Design Studio & Digital Design Agency",
   description:
-    "ZeroRender, Inc. is a design-tech startup building modern, AI-powered digital experiences for small businesses. We create fast, accessible websites, automated workflows, and sleek brand identities that help founders launch and scale with confidence.",
+    "ZeroRender is a premier web design studio and digital design agency creating bespoke websites and brands. As a leading branding studio, we build digital products for startups and small businesses.",
   generator: "v0.app",
   icons: {
     icon: "/logo_bw_inverted.png",
