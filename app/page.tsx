@@ -711,12 +711,10 @@ export default function Page() {
       <section id="vision" className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 md:px-8 bg-zinc-950">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-6 sm:mb-8 md:mb-10">
-            Our Vision
+            Why Choose Our Branding Studio?
           </h2>
           <p className="text-base sm:text-lg md:text-xl text-zinc-400 leading-relaxed max-w-3xl mx-auto">
-            Empowering entrepreneurs with enterprise-grade digital tools that are accessible, affordable, and AI-powered. 
-            We believe every small business deserves the same level of technology and design excellence as the biggest companies, 
-            without the complexity or cost.
+            ZeroRender is more than just a digital design agency; we are your strategic partner in innovation. We understand that every business is unique. For this reason, we build custom packages that perfectly fit your specific needs and budget, ensuring you receive a tailored solution without compromise. Our team, a collective of technical experts and creative visionaries, is dedicated to delivering excellence.
           </p>
         </div>
       </section>
