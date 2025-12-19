@@ -22,7 +22,19 @@ export async function GET() {
     
     try {
       // Dynamically import ioredis (in case it's not installed)
-      const Redis = (await import("ioredis")).default
+      let Redis: any
+      try {
+        Redis = (await import("ioredis")).default
+      } catch (importError) {
+        error = "ioredis package not installed. Run: npm install ioredis"
+        return NextResponse.json({ 
+          configured: !!REDIS_URL,
+          connected: false,
+          error,
+          message: "Redis configured but ioredis package is missing"
+        })
+      }
+      
       redis = new Redis(REDIS_URL, {
         maxRetriesPerRequest: 1,
         connectTimeout: 5000,
