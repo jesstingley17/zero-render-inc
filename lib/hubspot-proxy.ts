@@ -1,0 +1,152 @@
+/**
+ * HubSpot Reverse Proxy Utilities
+ * 
+ * Rewrites HubSpot URLs to use the reverse proxy domain (hub.zero-render.com)
+ * This improves performance and ensures all assets load through your domain.
+ */
+
+const HUBSPOT_REVERSE_PROXY_DOMAIN = 'hub.zero-render.com'
+
+/**
+ * Common HubSpot domain patterns to replace
+ */
+const HUBSPOT_DOMAINS = [
+  'cdn2.hubspot.net',
+  'cdn.hubspot.com',
+  'hubspotusercontent30.net',
+  'hubspotusercontent20.net',
+  'hubspotusercontent10.net',
+  'hubspotusercontent.net',
+  'hs-sites.com',
+  'hs-sitescontent.com',
+  'hsforms.com',
+  'api.hubapi.com',
+]
+
+/**
+ * Check if a URL is a HubSpot URL
+ */
+function isHubSpotUrl(url: string): boolean {
+  if (!url || typeof url !== 'string') return false
+  
+  try {
+    const urlObj = new URL(url.startsWith('//') ? `https:${url}` : url.startsWith('/') ? `https://hubspot.com${url}` : url)
+    const hostname = urlObj.hostname.toLowerCase()
+    
+    // Check if it's a HubSpot domain
+    return HUBSPOT_DOMAINS.some(domain => hostname.includes(domain)) ||
+           hostname.includes('hubspot') ||
+           urlObj.pathname.startsWith('/hubfs/') ||
+           urlObj.pathname.startsWith('/hs-fs/')
+  } catch {
+    // If URL parsing fails, check if it's a relative HubSpot path
+    return url.startsWith('/hubfs/') || url.startsWith('/hs-fs/')
+  }
+}
+
+/**
+ * Rewrite a HubSpot URL to use the reverse proxy
+ */
+export function rewriteHubSpotUrl(url: string | null | undefined): string | null {
+  if (!url || typeof url !== 'string') return url || null
+  
+  // If already using reverse proxy, return as-is
+  if (url.includes(HUBSPOT_REVERSE_PROXY_DOMAIN)) {
+    return url
+  }
+  
+  // If not a HubSpot URL, return as-is
+  if (!isHubSpotUrl(url)) {
+    return url
+  }
+  
+  try {
+    // Handle relative URLs (starting with /)
+    if (url.startsWith('/')) {
+      // If it's a HubSpot path like /hubfs/ or /hs-fs/, prepend the reverse proxy domain
+      if (url.startsWith('/hubfs/') || url.startsWith('/hs-fs/')) {
+        return `https://${HUBSPOT_REVERSE_PROXY_DOMAIN}${url}`
+      }
+      // Otherwise, return as-is (might be a relative path on our site)
+      return url
+    }
+    
+    // Handle protocol-relative URLs (//)
+    if (url.startsWith('//')) {
+      const urlObj = new URL(`https:${url}`)
+      return `https://${HUBSPOT_REVERSE_PROXY_DOMAIN}${urlObj.pathname}${urlObj.search}${urlObj.hash}`
+    }
+    
+    // Handle full URLs
+    const urlObj = new URL(url)
+    return `https://${HUBSPOT_REVERSE_PROXY_DOMAIN}${urlObj.pathname}${urlObj.search}${urlObj.hash}`
+  } catch (error) {
+    // If URL parsing fails, return original
+    console.warn('Failed to rewrite HubSpot URL:', url, error)
+    return url
+  }
+}
+
+/**
+ * Rewrite all HubSpot URLs in HTML content
+ * This replaces img src, a href, and other asset URLs
+ */
+export function rewriteHubSpotContent(html: string | null | undefined): string {
+  if (!html || typeof html !== 'string') return html || ''
+  
+  // Replace img src attributes
+  html = html.replace(
+    /<img([^>]*)\ssrc=["']([^"']+)["']([^>]*)>/gi,
+    (match, before, src, after) => {
+      const rewrittenSrc = rewriteHubSpotUrl(src)
+      return `<img${before} src="${rewrittenSrc}"${after}>`
+    }
+  )
+  
+  // Replace a href attributes (for links to HubSpot assets)
+  html = html.replace(
+    /<a([^>]*)\shref=["']([^"']+)["']([^>]*)>/gi,
+    (match, before, href, after) => {
+      // Only rewrite if it's a HubSpot URL
+      if (isHubSpotUrl(href)) {
+        const rewrittenHref = rewriteHubSpotUrl(href)
+        return `<a${before} href="${rewrittenHref}"${after}>`
+      }
+      return match
+    }
+  )
+  
+  // Replace background-image URLs in style attributes
+  html = html.replace(
+    /style=["']([^"']*background-image:\s*url\(([^)]+)\)[^"']*)["']/gi,
+    (match, styleContent, url) => {
+      if (isHubSpotUrl(url)) {
+        const rewrittenUrl = rewriteHubSpotUrl(url)
+        return `style="${styleContent.replace(url, rewrittenUrl)}"`
+      }
+      return match
+  })
+  
+  // Replace srcset attributes (for responsive images)
+  html = html.replace(
+    /srcset=["']([^"']+)["']/gi,
+    (match, srcset) => {
+      const rewrittenSrcset = srcset
+        .split(',')
+        .map((src: string) => {
+          const parts = src.trim().split(/\s+/)
+          const url = parts[0]
+          const descriptor = parts.slice(1).join(' ')
+          if (isHubSpotUrl(url)) {
+            return `${rewriteHubSpotUrl(url)} ${descriptor}`.trim()
+          }
+          return src.trim()
+        })
+        .join(', ')
+      return `srcset="${rewrittenSrcset}"`
+    }
+  )
+  
+  return html
+}
+

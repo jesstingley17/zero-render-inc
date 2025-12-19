@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
+import { rewriteHubSpotUrl, rewriteHubSpotContent } from "@/lib/hubspot-proxy"
 
 // Cache blog posts for 5 minutes (300 seconds)
 // This significantly improves load times
@@ -225,8 +226,13 @@ export function transformHubSpotPost(post: HubSpotBlogPost) {
     }
   }
 
+  // Rewrite featured image URL to use reverse proxy
+  if (featuredImage) {
+    featuredImage = rewriteHubSpotUrl(featuredImage)
+  }
+
   // Get content from multiple possible field names
-  const postContent = post.postBody || 
+  let postContent = post.postBody || 
                      post.post_body || 
                      post.body || 
                      post.content ||
@@ -234,6 +240,11 @@ export function transformHubSpotPost(post: HubSpotBlogPost) {
                      post.html_content ||
                      post.post_html ||
                      ""
+  
+  // Rewrite all HubSpot URLs in content to use reverse proxy
+  if (postContent) {
+    postContent = rewriteHubSpotContent(postContent)
+  }
 
   // Recalculate read time from actual content
   const actualWordCount = postContent ? postContent.replace(/<[^>]*>/g, "").split(/\s+/).length : wordCount
@@ -250,7 +261,7 @@ export function transformHubSpotPost(post: HubSpotBlogPost) {
                 "ZeroRender Team"
 
   // Extract author avatar/profile picture - check multiple field names and nested objects
-  const authorAvatar = post.blogAuthorAvatar ||
+  let authorAvatar = post.blogAuthorAvatar ||
                       post.blog_author_avatar ||
                       post.authorAvatar ||
                       post.author_avatar ||
@@ -259,6 +270,11 @@ export function transformHubSpotPost(post: HubSpotBlogPost) {
                       (typeof post.blogAuthor === 'object' && post.blogAuthor?.image) ||
                       (typeof post.author === 'object' && post.author?.avatar) ||
                       null
+  
+  // Rewrite author avatar URL to use reverse proxy
+  if (authorAvatar) {
+    authorAvatar = rewriteHubSpotUrl(authorAvatar)
+  }
 
   // Extract author bio - check multiple field names and nested objects
   const authorBio = post.blogAuthorBio ||
@@ -409,7 +425,7 @@ export async function GET(request: NextRequest) {
         const fullPost = await fetchHubSpotBlogPostById(post.originalId)
         if (fullPost) {
           // Update content with full post body - check multiple possible field names
-          const postContent = fullPost.postBody || 
+          let postContent = fullPost.postBody || 
                              fullPost.post_body || 
                              fullPost.body || 
                              fullPost.content ||
@@ -417,7 +433,8 @@ export async function GET(request: NextRequest) {
                              fullPost.html_content
           
           if (postContent) {
-            post.content = postContent
+            // Rewrite all HubSpot URLs in content to use reverse proxy
+            post.content = rewriteHubSpotContent(postContent)
           } else {
             console.warn(`No content found for post ${post.originalId}. Available fields:`, Object.keys(fullPost))
           }
@@ -436,7 +453,7 @@ export async function GET(request: NextRequest) {
           }
 
           // Update author avatar - check multiple possible field names and nested objects
-          const fullAuthorAvatar = fullPost.blogAuthorAvatar ||
+          let fullAuthorAvatar = fullPost.blogAuthorAvatar ||
                                   fullPost.blog_author_avatar ||
                                   fullPost.authorAvatar ||
                                   fullPost.author_avatar ||
@@ -450,7 +467,8 @@ export async function GET(request: NextRequest) {
                                   null
           
           if (fullAuthorAvatar && !post.authorAvatar) {
-            post.authorAvatar = fullAuthorAvatar
+            // Rewrite author avatar URL to use reverse proxy
+            post.authorAvatar = rewriteHubSpotUrl(fullAuthorAvatar)
           }
 
           // Update author bio - check multiple possible field names and nested objects
@@ -493,12 +511,13 @@ export async function GET(request: NextRequest) {
           }
           
           // Also update other fields that might be more complete in the full post
-          const fullFeaturedImage = fullPost.featuredImage || 
+          let fullFeaturedImage = fullPost.featuredImage || 
                                    fullPost.featured_image || 
                                    fullPost.featuredImageUrl || 
                                    fullPost.image
           if (fullFeaturedImage && !post.featuredImage) {
-            post.featuredImage = fullFeaturedImage
+            // Rewrite featured image URL to use reverse proxy
+            post.featuredImage = rewriteHubSpotUrl(fullFeaturedImage)
           }
           if (fullPost.featuredImageAltText && !post.featuredImageAlt) {
             post.featuredImageAlt = fullPost.featuredImageAltText
@@ -511,7 +530,8 @@ export async function GET(request: NextRequest) {
           if (!post.featuredImage && postContent) {
             const imgMatch = postContent.match(/<img[^>]+src=["']([^"']+)["'][^>]*>/i)
             if (imgMatch && imgMatch[1]) {
-              post.featuredImage = imgMatch[1]
+              // Rewrite extracted image URL to use reverse proxy
+              post.featuredImage = rewriteHubSpotUrl(imgMatch[1])
             }
           }
         } else {
