@@ -160,7 +160,7 @@ export default function HubSpotCTAPopup() {
           console.log("[HubSpot Form] Creating form...")
           ;(window as any).hbspt.forms.create({
             portalId: "244653866",
-            formId: "1lkBpjKS1SxGNy4qIBJY36Q41ns4q",
+            formId: "9640698c-a4b5-4b11-8dcb-8a88049637e9",
             region: "na2",
             target: "#hubspot-form-container",
           })
@@ -184,7 +184,7 @@ export default function HubSpotCTAPopup() {
 
       retryCount++
       if (retryCount < maxRetries) {
-        setTimeout(tryInitialize, 200)
+        setTimeout(tryInitialize, 150)
       } else {
         console.error("Failed to initialize HubSpot form after multiple attempts")
       }
@@ -196,11 +196,11 @@ export default function HubSpotCTAPopup() {
     if (existingScript) {
       // Script exists, wait for it to be ready
       if ((window as any).hbspt && (window as any).hbspt.forms) {
-        setTimeout(tryInitialize, 100)
+        tryInitialize() // Try immediately
       } else {
-        existingScript.onload = () => setTimeout(tryInitialize, 100)
+        existingScript.onload = () => tryInitialize()
         if (existingScript.complete || existingScript.readyState === "complete") {
-          setTimeout(tryInitialize, 100)
+          tryInitialize()
         }
       }
     } else {
@@ -213,7 +213,8 @@ export default function HubSpotCTAPopup() {
       script.type = "text/javascript"
       
       script.onload = () => {
-        setTimeout(tryInitialize, 300)
+        // Try immediately when script loads
+        setTimeout(tryInitialize, 100)
       }
       
       script.onerror = () => {
