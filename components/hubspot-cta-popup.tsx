@@ -7,41 +7,18 @@ export default function HubSpotCTAPopup() {
   const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
-    // Check if user has seen the popup before
-    const hasSeenPopup = localStorage.getItem("hubspot-cta-seen")
+    // Show popup after a short delay (1 second) for better UX on every visit
+    const timer = setTimeout(() => {
+      setIsOpen(true)
+    }, 1000)
     
-    if (!hasSeenPopup) {
-      // Show popup after a short delay (1 second) for better UX
-      const timer = setTimeout(() => {
-        setIsOpen(true)
-      }, 1000)
-      
-      return () => clearTimeout(timer)
-    }
+    return () => clearTimeout(timer)
   }, [])
 
   const handleClose = () => {
     setIsOpen(false)
-    // Mark as seen in localStorage (expires after 30 days)
-    localStorage.setItem("hubspot-cta-seen", "true")
-    // Set expiration date (30 days from now)
-    const expirationDate = new Date()
-    expirationDate.setDate(expirationDate.getDate() + 30)
-    localStorage.setItem("hubspot-cta-expires", expirationDate.toISOString())
+    // No longer storing in localStorage - popup will show on every visit
   }
-
-  // Check if popup has expired (show again after 30 days)
-  useEffect(() => {
-    const expirationDate = localStorage.getItem("hubspot-cta-expires")
-    if (expirationDate) {
-      const now = new Date()
-      const expires = new Date(expirationDate)
-      if (now > expires) {
-        localStorage.removeItem("hubspot-cta-seen")
-        localStorage.removeItem("hubspot-cta-expires")
-      }
-    }
-  }, [])
 
   // Add mobile-optimized CSS for HubSpot form
   useEffect(() => {
