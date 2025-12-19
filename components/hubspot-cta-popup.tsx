@@ -43,63 +43,96 @@ export default function HubSpotCTAPopup() {
     }
   }, [])
 
-  // Load HubSpot CTA script
+  // Load HubSpot CTA script and initialize
   useEffect(() => {
     if (!isOpen) return
 
-    // Load script in head (HubSpot's recommended approach)
-    const loadScript = () => {
-      // Check if script already exists
-      if (document.getElementById("hs-script-loader")) {
-        // Script exists, trigger initialization
-        if ((window as any).hscta) {
-          initializeCTA()
-        }
-        return
+    let script: HTMLScriptElement | null = null
+    let retryCount = 0
+    const maxRetries = 20
+
+    const initializeCTA = () => {
+      const ctaElement = document.getElementById("hs-cta-embed-279511877357")
+      
+      if (!ctaElement) {
+        console.error("[HubSpot CTA] Element not found")
+        return false
       }
 
-      // Create and load script
-      const script = document.createElement("script")
+      // Check if already initialized (has iframe)
+      if (ctaElement.querySelector("iframe")) {
+        console.log("[HubSpot CTA] Already initialized")
+        return true
+      }
+
+      // Try to initialize
+      if (typeof window !== "undefined" && (window as any).hscta) {
+        try {
+          console.log("[HubSpot CTA] Initializing...")
+          ;(window as any).hscta.load(279511877357, {
+            targetId: "hs-cta-embed-279511877357",
+          })
+          console.log("[HubSpot CTA] Initialization called")
+          return true
+        } catch (error) {
+          console.error("[HubSpot CTA] Error initializing:", error)
+          return false
+        }
+      } else {
+        console.log("[HubSpot CTA] hscta not available yet")
+      }
+      
+      return false
+    }
+
+    const tryInitialize = () => {
+      if (initializeCTA()) {
+        return // Success
+      }
+
+      retryCount++
+      if (retryCount < maxRetries) {
+        setTimeout(tryInitialize, 300)
+      } else {
+        console.error("Failed to initialize HubSpot CTA after multiple attempts")
+      }
+    }
+
+    // Check if script already exists
+    const existingScript = document.getElementById("hs-script-loader") as HTMLScriptElement
+    
+    if (existingScript) {
+      // Script exists, wait for it to be ready
+      if ((window as any).hscta) {
+        setTimeout(tryInitialize, 200)
+      } else {
+        existingScript.onload = () => setTimeout(tryInitialize, 200)
+        if (existingScript.complete || existingScript.readyState === "complete") {
+          setTimeout(tryInitialize, 200)
+        }
+      }
+    } else {
+      // Load the script
+      script = document.createElement("script")
       script.src = "https://js-na2.hscta.com/cta/current.js"
       script.async = true
       script.charset = "utf-8"
       script.id = "hs-script-loader"
       
       script.onload = () => {
-        // HubSpot script auto-detects elements, but we can also manually trigger
-        setTimeout(initializeCTA, 500)
+        // Wait a bit for script to initialize, then try to load CTA
+        setTimeout(tryInitialize, 500)
       }
       
       script.onerror = () => {
         console.error("Failed to load HubSpot CTA script")
       }
       
-      // Add to head (HubSpot's recommended location)
       document.head.appendChild(script)
     }
 
-    const initializeCTA = () => {
-      // HubSpot auto-detects, but we can manually trigger if needed
-      if (typeof window !== "undefined" && (window as any).hscta) {
-        try {
-          const ctaElement = document.getElementById("hs-cta-embed-279511877357")
-          if (ctaElement && !ctaElement.querySelector("iframe")) {
-            // Only initialize if not already loaded
-            ;(window as any).hscta.load(279511877357, {
-              targetId: "hs-cta-embed-279511877357",
-            })
-          }
-        } catch (error) {
-          console.error("Error initializing HubSpot CTA:", error)
-        }
-      }
-    }
-
-    // Small delay to ensure DOM is ready
-    const timer = setTimeout(loadScript, 100)
-
     return () => {
-      clearTimeout(timer)
+      // Don't remove script as it might be used elsewhere
     }
   }, [isOpen])
 
@@ -111,7 +144,7 @@ export default function HubSpotCTAPopup() {
       onClick={handleClose}
     >
       <div
-        className="bg-white rounded-lg w-full max-w-[700px] max-h-[90vh] overflow-auto relative"
+        className="bg-white rounded-lg w-full max-w-[700px] max-h-[90vh] overflow-hidden relative"
         onClick={(e) => e.stopPropagation()}
         style={{ maxHeight: "90vh" }}
       >
@@ -124,27 +157,25 @@ export default function HubSpotCTAPopup() {
           <X className="w-5 h-5 text-black" />
         </button>
 
-        {/* HubSpot CTA Embed */}
+        {/* HubSpot CTA Embed - Using exact structure from HubSpot */}
         <div
           id="hs-cta-embed-279511877357"
           className="hs-cta-embed hs-cta-embed-279511877357"
           style={{
             maxWidth: "100%",
+            maxHeight: "100%",
             width: "100%",
-            minHeight: "620px",
-            position: "relative",
+            minWidth: "320px",
+            height: "620px",
           }}
           data-hubspot-wrapper-cta-id="279511877357"
         >
-
           <div className="hs-cta-loading-dot__container">
             <div className="hs-cta-loading-dot"></div>
             <div className="hs-cta-loading-dot"></div>
             <div className="hs-cta-loading-dot"></div>
           </div>
-
           <div className="hs-cta-embed__skeleton"></div>
-
           <picture>
             <source
               srcSet="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
@@ -154,7 +185,7 @@ export default function HubSpotCTAPopup() {
               alt="Exclusive Website Transformation Opportunity Apply for a complimentary 6-page website rebuild&mdash;designed for one exceptional small business or startup"
               loading="lazy"
               src="https://hubspot-no-cache-na2-prod.s3.amazonaws.com/cta/default/244653866/interactive-279511877357.png"
-              style={{ height: "auto", width: "100%", objectFit: "contain", display: "block" }}
+              style={{ height: "100%", width: "100%", objectFit: "fill" }}
               onError={(e) => {
                 const target = e.target as HTMLImageElement
                 target.style.display = "none"
