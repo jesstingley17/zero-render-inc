@@ -341,16 +341,6 @@ export function transformHubSpotPost(post: HubSpotBlogPost) {
                 post.blogAuthor ||
                 post.blog_author ||
                 "ZeroRender Team"
-
-  // Extract author name first (needed for fallback)
-  const author = post.blogAuthorDisplayName || 
-                 post.blog_author_display_name ||
-                 post.authorName || 
-                 post.author_name ||
-                 post.author ||
-                 post.blogAuthor ||
-                 post.blog_author ||
-                 "ZeroRender Team"
   
   // Extract author avatar/profile picture - check multiple field names and nested objects
   let authorAvatar = post.blogAuthorAvatar ||
