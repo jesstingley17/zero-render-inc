@@ -586,14 +586,34 @@ export async function GET(request: NextRequest) {
                                   fullPost.author_image ||
                                   fullPost.authorProfileImage ||
                                   fullPost.author_profile_image ||
+                                  fullPost.blogAuthorImage ||
+                                  fullPost.blog_author_image ||
+                                  fullPost.blogAuthorProfileImage ||
+                                  fullPost.blog_author_profile_image ||
                                   fullPost.blogAuthor?.avatar ||
                                   fullPost.blogAuthor?.image ||
                                   fullPost.blogAuthor?.avatarUrl ||
+                                  fullPost.blogAuthor?.profileImage ||
                                   fullPost.author?.avatar ||
                                   fullPost.author?.image ||
                                   fullPost.blog_author?.avatar ||
                                   (typeof fullPost.blogAuthor === 'object' && fullPost.blogAuthor?.avatar) ||
                                   null
+          
+          // Debug logging
+          if (process.env.NODE_ENV !== 'production' && !fullAuthorAvatar) {
+            console.log('Full post author data:', {
+              blogAuthor: fullPost.blogAuthor,
+              blogAuthorDisplayName: fullPost.blogAuthorDisplayName,
+              authorName: fullPost.authorName,
+              availableFields: Object.keys(fullPost).filter(k => 
+                k.toLowerCase().includes('author') || 
+                k.toLowerCase().includes('avatar') || 
+                k.toLowerCase().includes('image') ||
+                k.toLowerCase().includes('profile')
+              )
+            })
+          }
           
           if (fullAuthorAvatar && !post.authorAvatar) {
             // Rewrite author avatar URL to use reverse proxy
@@ -607,15 +627,39 @@ export async function GET(request: NextRequest) {
                 if (fetchedAvatar) {
                   post.authorAvatar = fetchedAvatar
                 } else {
-                  // Final fallback: use local image map
-                  if (AUTHOR_IMAGE_MAP[authorName]) {
-                    post.authorAvatar = AUTHOR_IMAGE_MAP[authorName]
+                  // Final fallback: use local image map with fuzzy matching
+                  const authorNameStr = typeof authorName === 'string' ? authorName : String(authorName)
+                  if (AUTHOR_IMAGE_MAP[authorNameStr]) {
+                    post.authorAvatar = AUTHOR_IMAGE_MAP[authorNameStr]
+                  } else {
+                    // Try partial matches
+                    const normalizedAuthor = authorNameStr.toLowerCase().trim()
+                    for (const [key, value] of Object.entries(AUTHOR_IMAGE_MAP)) {
+                      if (key.toLowerCase().trim() === normalizedAuthor || 
+                          normalizedAuthor.includes(key.toLowerCase().trim()) ||
+                          key.toLowerCase().trim().includes(normalizedAuthor)) {
+                        post.authorAvatar = value
+                        break
+                      }
+                    }
                   }
                 }
               } catch (error) {
                 // If fetch fails, try local image map
-                if (authorName && AUTHOR_IMAGE_MAP[authorName]) {
-                  post.authorAvatar = AUTHOR_IMAGE_MAP[authorName]
+                const authorNameStr = typeof authorName === 'string' ? authorName : String(authorName)
+                if (AUTHOR_IMAGE_MAP[authorNameStr]) {
+                  post.authorAvatar = AUTHOR_IMAGE_MAP[authorNameStr]
+                } else {
+                  // Try partial matches
+                  const normalizedAuthor = authorNameStr.toLowerCase().trim()
+                  for (const [key, value] of Object.entries(AUTHOR_IMAGE_MAP)) {
+                    if (key.toLowerCase().trim() === normalizedAuthor || 
+                        normalizedAuthor.includes(key.toLowerCase().trim()) ||
+                        key.toLowerCase().trim().includes(normalizedAuthor)) {
+                      post.authorAvatar = value
+                      break
+                    }
+                  }
                 }
               }
             }
