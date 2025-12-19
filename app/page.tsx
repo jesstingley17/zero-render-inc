@@ -13,6 +13,10 @@ const JobApplicationSection = dynamic(() => import("@/components/job-application
   ssr: false, // Only load on client side
 })
 
+const HubSpotCTAPopup = dynamic(() => import("@/components/hubspot-cta-popup"), {
+  ssr: false, // Only load on client side
+})
+
 function NewsletterForm() {
   const [email, setEmail] = useState("")
   const [loading, setLoading] = useState(false)
@@ -1011,6 +1015,9 @@ export default function Page() {
 
       {/* Job Application Section */}
       <JobApplicationSection />
+
+      {/* HubSpot CTA Popup */}
+      <HubSpotCTAPopup />
     </main>
   )
 }
