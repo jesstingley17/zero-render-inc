@@ -163,21 +163,19 @@ export default function HubSpotCTAPopup() {
 
         {/* Header Section */}
         <div className="px-6 sm:px-8 pt-6 sm:pt-8 pb-4 border-b border-gray-200">
-          <h2 className="text-2xl sm:text-3xl font-bold text-black mb-3">
-            Exclusive Website Transformation Opportunity
+          <h2 className="text-2xl sm:text-3xl font-bold text-black mb-4">
+            Win a Complimentary 6-Page Website
           </h2>
-          <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
-            Apply for a complimentary 6-page website rebuild—designed for one exceptional small business or startup. 
-            This is your chance to transform your online presence with a fully custom website, completely free.
-          </p>
-          <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-            <p className="text-sm text-gray-600 font-semibold mb-2">What's included:</p>
-            <ul className="text-sm text-gray-600 space-y-1 list-disc list-inside">
-              <li>Complete 6-page website redesign</li>
-              <li>Custom design tailored to your brand</li>
-              <li>Mobile-responsive and optimized</li>
-              <li>Professional development and launch</li>
-            </ul>
+          <div className="space-y-4 text-base sm:text-lg text-gray-700 leading-relaxed">
+            <p>
+              We are offering one business the opportunity to receive a complimentary, fully custom six-page website—designed, developed, and launched by ZeroRender, Inc.
+            </p>
+            <p>
+              This is not a template or demo build. The selected business will receive a modern, mobile-responsive website structured for clarity, performance, and real-world usability. The initiative reflects our studio's standards and approach to digital work, while providing a meaningful upgrade to a business positioned for growth.
+            </p>
+            <p className="font-semibold text-gray-900">
+              Entry is free. One business will be selected through a randomized drawing and contacted directly.
+            </p>
           </div>
         </div>
 
