@@ -15,26 +15,18 @@ interface BlogPost {
 
 async function getBlogPosts(): Promise<BlogPost[]> {
   try {
-    // Fetch directly from API route on the server
-    // Using absolute URL for server-side fetch
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_URL 
-      ? `https://${process.env.VERCEL_URL}` 
-      : "http://localhost:3000"
+    // Import the functions directly to avoid HTTP fetch during build
+    const { fetchHubSpotBlogPosts, transformHubSpotPost } = await import("@/app/api/hubspot/blog/route")
     
-    const response = await fetch(`${baseUrl}/api/hubspot/blog`, {
-      next: { revalidate: 300 }, // Cache for 5 minutes
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-
-    if (!response.ok) {
-      console.error("Failed to fetch blog posts:", response.statusText)
-      return []
-    }
-
-    const data = await response.json()
-    return data.posts || []
+    // Fetch directly from HubSpot (with caching at API route level)
+    const posts = await fetchHubSpotBlogPosts()
+    const transformedPosts = posts.map(transformHubSpotPost)
+    
+    // Sort by publish date (newest first)
+    transformedPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    
+    // Remove debug fields
+    return transformedPosts.map(({ originalSlug, originalId, originalUrl, ...post }) => post)
   } catch (error) {
     console.error("Error fetching blog posts:", error)
     return []
@@ -191,11 +183,6 @@ export default async function BlogPage() {
               <div className="flex flex-col space-y-3">
                 <a
                   href="tel:+13802662079"
-                  onClick={() =>
-                    typeof window !== "undefined" &&
-                    (window as any).gtag_report_phone_conversion &&
-                    (window as any).gtag_report_phone_conversion("tel:+13802662079")
-                  }
                   className="inline-flex items-center gap-2.5 sm:gap-3 text-base sm:text-lg md:text-xl text-white hover:text-zinc-300 transition-colors touch-manipulation py-2"
                 >
                   <svg
