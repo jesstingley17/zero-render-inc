@@ -45,40 +45,61 @@ export default function HubSpotCTAPopup() {
 
   // Load HubSpot CTA script
   useEffect(() => {
-    if (isOpen) {
-      // Check if script is already loaded
-      const existingScript = document.getElementById("hs-script-loader")
-      
-      if (!existingScript) {
-        // Load the HubSpot CTA script
-        const script = document.createElement("script")
-        script.src = "https://js-na2.hscta.com/cta/current.js"
-        script.async = true
-        script.charset = "utf-8"
-        script.id = "hs-script-loader"
-        document.body.appendChild(script)
-      }
+    if (!isOpen) return
 
-      // Initialize the CTA - HubSpot script auto-detects elements with data-hubspot-wrapper-cta-id
-      // But we can also manually trigger it after a delay to ensure it's ready
-      const initTimer = setTimeout(() => {
-        if (typeof window !== "undefined" && (window as any).hscta) {
-          try {
-            const ctaElement = document.getElementById("hs-cta-embed-279511877357")
-            if (ctaElement) {
-              ;(window as any).hscta.load(279511877357, {
-                targetId: "hs-cta-embed-279511877357",
-              })
-            }
-          } catch (error) {
-            console.error("Error loading HubSpot CTA:", error)
-          }
+    // Load script in head (HubSpot's recommended approach)
+    const loadScript = () => {
+      // Check if script already exists
+      if (document.getElementById("hs-script-loader")) {
+        // Script exists, trigger initialization
+        if ((window as any).hscta) {
+          initializeCTA()
         }
-      }, 500)
-
-      return () => {
-        clearTimeout(initTimer)
+        return
       }
+
+      // Create and load script
+      const script = document.createElement("script")
+      script.src = "https://js-na2.hscta.com/cta/current.js"
+      script.async = true
+      script.charset = "utf-8"
+      script.id = "hs-script-loader"
+      
+      script.onload = () => {
+        // HubSpot script auto-detects elements, but we can also manually trigger
+        setTimeout(initializeCTA, 500)
+      }
+      
+      script.onerror = () => {
+        console.error("Failed to load HubSpot CTA script")
+      }
+      
+      // Add to head (HubSpot's recommended location)
+      document.head.appendChild(script)
+    }
+
+    const initializeCTA = () => {
+      // HubSpot auto-detects, but we can manually trigger if needed
+      if (typeof window !== "undefined" && (window as any).hscta) {
+        try {
+          const ctaElement = document.getElementById("hs-cta-embed-279511877357")
+          if (ctaElement && !ctaElement.querySelector("iframe")) {
+            // Only initialize if not already loaded
+            ;(window as any).hscta.load(279511877357, {
+              targetId: "hs-cta-embed-279511877357",
+            })
+          }
+        } catch (error) {
+          console.error("Error initializing HubSpot CTA:", error)
+        }
+      }
+    }
+
+    // Small delay to ensure DOM is ready
+    const timer = setTimeout(loadScript, 100)
+
+    return () => {
+      clearTimeout(timer)
     }
   }, [isOpen])
 
@@ -92,11 +113,12 @@ export default function HubSpotCTAPopup() {
       <div
         className="bg-white rounded-lg w-full max-w-[700px] max-h-[90vh] overflow-auto relative"
         onClick={(e) => e.stopPropagation()}
+        style={{ maxHeight: "90vh" }}
       >
         {/* Close Button */}
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center bg-black/10 hover:bg-black/20 rounded-full transition-colors"
+          className="absolute top-4 right-4 z-20 w-8 h-8 flex items-center justify-center bg-black/10 hover:bg-black/20 rounded-full transition-colors"
           aria-label="Close popup"
         >
           <X className="w-5 h-5 text-black" />
@@ -108,9 +130,9 @@ export default function HubSpotCTAPopup() {
           className="hs-cta-embed hs-cta-embed-279511877357"
           style={{
             maxWidth: "100%",
-            maxHeight: "100%",
-            width: "700px",
-            height: "620.34375px",
+            width: "100%",
+            minHeight: "620px",
+            position: "relative",
           }}
           data-hubspot-wrapper-cta-id="279511877357"
         >
@@ -132,7 +154,7 @@ export default function HubSpotCTAPopup() {
               alt="Exclusive Website Transformation Opportunity Apply for a complimentary 6-page website rebuild&mdash;designed for one exceptional small business or startup"
               loading="lazy"
               src="https://hubspot-no-cache-na2-prod.s3.amazonaws.com/cta/default/244653866/interactive-279511877357.png"
-              style={{ height: "100%", width: "100%", objectFit: "fill" }}
+              style={{ height: "auto", width: "100%", objectFit: "contain", display: "block" }}
               onError={(e) => {
                 const target = e.target as HTMLImageElement
                 target.style.display = "none"
