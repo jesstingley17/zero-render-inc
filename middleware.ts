@@ -9,16 +9,16 @@ import type { NextRequest } from "next/server"
  * for it to work properly with HubSpot's validation.
  */
 export function middleware(request: NextRequest) {
-  // Check if this is a request to hub.zero-render.com
+  // Check if this is a request to blog.zero-render.com (HubSpot reverse proxy)
   const host = request.headers.get("host")
-  const isHubspotProxy = host?.includes("hub.zero-render.com")
+  const isHubspotProxy = host?.includes("blog.zero-render.com")
 
   if (isHubspotProxy) {
     // Clone the request headers
     const requestHeaders = new Headers(request.headers)
     
     // Add the HubSpot reverse proxy header
-    requestHeaders.set("X-HS-Public-Host", "hub.zero-render.com")
+    requestHeaders.set("X-HS-Public-Host", "blog.zero-render.com")
     
     // Return response with modified headers
     return NextResponse.next({

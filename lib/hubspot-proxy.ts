@@ -1,11 +1,14 @@
 /**
  * HubSpot Reverse Proxy Utilities
  * 
- * Rewrites HubSpot URLs to use the reverse proxy domain (hub.zero-render.com)
+ * Rewrites HubSpot URLs to use the reverse proxy domain (blog.zero-render.com)
  * This improves performance and ensures all assets load through your domain.
+ * 
+ * Note: Using blog.zero-render.com instead of hub.zero-render.com to avoid
+ * conflict with Starlight Hyperlift Manager deployment.
  */
 
-const HUBSPOT_REVERSE_PROXY_DOMAIN = 'hub.zero-render.com'
+const HUBSPOT_REVERSE_PROXY_DOMAIN = 'blog.zero-render.com'
 
 /**
  * Common HubSpot domain patterns to replace
