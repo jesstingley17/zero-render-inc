@@ -24,18 +24,18 @@ export const metadata: Metadata = {
     canonical: "https://www.zero-render.com",
   },
   openGraph: {
-    title: "ZeroRender - AI-Powered Digital Experiences for Small Business",
+    title: "ZeroRender - Premier Web Design Studio & Digital Design Agency",
     description:
-      "ZeroRender, Inc. is a design-tech startup building modern, AI-powered digital experiences for small businesses. We create fast, accessible websites, automated workflows, and sleek brand identities that help founders launch and scale with confidence.",
+      "ZeroRender is a premier web design studio and digital design agency creating bespoke websites and brands. As a leading branding studio, we build digital products for startups and small businesses.",
     url: "https://www.zero-render.com",
     siteName: "ZeroRender",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ZeroRender - AI-Powered Digital Experiences for Small Business",
+    title: "ZeroRender - Premier Web Design Studio & Digital Design Agency",
     description:
-      "ZeroRender, Inc. is a design-tech startup building modern, AI-powered digital experiences for small businesses. We create fast, accessible websites, automated workflows, and sleek brand identities that help founders launch and scale with confidence.",
+      "ZeroRender is a premier web design studio and digital design agency creating bespoke websites and brands. As a leading branding studio, we build digital products for startups and small businesses.",
   },
   robots: {
     index: true,
