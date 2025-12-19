@@ -1,3 +1,6 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import { ArrowLeft, Calendar, Clock } from "lucide-react"
 import Link from "next/link"
 import { BlogHeader } from "@/components/blog-header"
@@ -13,29 +16,40 @@ interface BlogPost {
   featuredImage?: string | null
 }
 
-async function getBlogPosts(): Promise<BlogPost[]> {
-  try {
-    // Import the functions directly to avoid HTTP fetch during build
-    const { fetchHubSpotBlogPosts, transformHubSpotPost } = await import("@/app/api/hubspot/blog/route")
-    
-    // Fetch directly from HubSpot (with caching at API route level)
-    const posts = await fetchHubSpotBlogPosts()
-    const transformedPosts = posts.map(transformHubSpotPost)
-    
-    // Sort by publish date (newest first)
-    transformedPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    
-    // Remove debug fields
-    return transformedPosts.map(({ originalSlug, originalId, originalUrl, ...post }) => post)
-  } catch (error) {
-    console.error("Error fetching blog posts:", error)
-    return []
-  }
-}
+export default function BlogPage() {
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-export default async function BlogPage() {
-  // Fetch data on the server - much faster!
-  const blogPosts = await getBlogPosts()
+  useEffect(() => {
+    async function fetchPosts() {
+      try {
+        setLoading(true)
+        setError(null)
+        
+        // Fetch with cache headers
+        const response = await fetch("/api/hubspot/blog", {
+          cache: "force-cache", // Use cached version when available
+          next: { revalidate: 300 }, // Revalidate every 5 minutes
+        })
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch blog posts")
+        }
+
+        const data = await response.json()
+        setBlogPosts(data.posts || [])
+      } catch (err) {
+        console.error("Error fetching blog posts:", err)
+        setError(err instanceof Error ? err.message : "Failed to load blog posts")
+        setBlogPosts([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchPosts()
+  }, [])
 
   return (
     <main className="bg-black text-white min-h-screen">
@@ -78,10 +92,46 @@ export default async function BlogPage() {
       {/* Blog Content */}
       <section className="pb-16 sm:pb-20 md:pb-24 px-4 sm:px-6 md:px-8">
         <div className="container mx-auto max-w-7xl">
-          {/* Blog Posts Grid */}
-          {blogPosts.length > 0 ? (
+          {/* Loading State */}
+          {loading && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 md:gap-12">
-              {blogPosts.map((post, index) => (
+              {[...Array(6)].map((_, i) => (
+                <div
+                  key={i}
+                  className="border border-white/10 bg-white/5 animate-pulse"
+                >
+                  <div className="aspect-video bg-zinc-800" />
+                  <div className="p-6 sm:p-8 space-y-4">
+                    <div className="h-4 w-20 bg-zinc-800 rounded" />
+                    <div className="h-8 bg-zinc-800 rounded" />
+                    <div className="h-4 bg-zinc-800 rounded" />
+                    <div className="h-4 bg-zinc-800 rounded w-3/4" />
+                    <div className="pt-4 border-t border-white/10">
+                      <div className="h-4 bg-zinc-800 rounded w-1/2" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && !loading && (
+            <div className="text-center py-16 sm:py-20 md:py-24">
+              <p className="text-lg sm:text-xl text-red-400 mb-4">{error}</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="px-6 py-3 bg-white text-black hover:bg-zinc-900 hover:text-white transition-colors"
+              >
+                Try Again
+              </button>
+            </div>
+          )}
+
+          {/* Blog Posts Grid */}
+          {!loading && !error && blogPosts.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 md:gap-12">
+              {blogPosts.map((post) => (
                 <Link
                   key={post.slug}
                   href={`/blog/${post.slug}`}
@@ -95,6 +145,7 @@ export default async function BlogPage() {
                         src={post.featuredImage}
                         alt={post.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                        loading="lazy"
                       />
                       <div className="absolute top-4 left-4 z-20">
                         <span className="inline-block px-3 py-1 text-xs uppercase tracking-widest bg-white/20 backdrop-blur-sm text-white border border-white/30">
@@ -159,7 +210,10 @@ export default async function BlogPage() {
                 </Link>
               ))}
             </div>
-          ) : (
+          )}
+
+          {/* Empty State */}
+          {!loading && !error && blogPosts.length === 0 && (
             <div className="text-center py-16 sm:py-20 md:py-24">
               <p className="text-lg sm:text-xl text-zinc-400">No blog posts yet. Check back soon!</p>
             </div>

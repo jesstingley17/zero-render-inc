@@ -4,9 +4,15 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
   },
- 
+  // Enable static page generation where possible
+  output: 'standalone',
 }
 
 export default nextConfig
