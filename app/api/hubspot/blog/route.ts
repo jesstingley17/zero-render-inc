@@ -33,7 +33,9 @@ export async function fetchHubSpotBlogPosts() {
   const blogId = process.env.HUBSPOT_BLOG_ID
 
   if (!apiKey) {
-    throw new Error("HUBSPOT_API_KEY is not configured. Please add it to your Vercel environment variables.")
+    // Return empty array instead of throwing - don't break the site
+    console.warn("HUBSPOT_API_KEY is not configured. Blog posts will be empty.")
+    return []
   }
 
   try {

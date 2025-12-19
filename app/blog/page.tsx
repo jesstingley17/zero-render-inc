@@ -17,11 +17,24 @@ interface BlogPost {
 
 async function getBlogPosts(): Promise<BlogPost[]> {
   try {
+    // Check if HubSpot is configured
+    if (!process.env.HUBSPOT_API_KEY) {
+      console.warn("HUBSPOT_API_KEY not configured - blog posts will be empty")
+      return []
+    }
+
     // Import functions directly to avoid HTTP overhead
     const { fetchHubSpotBlogPosts, transformHubSpotPost } = await import("@/app/api/hubspot/blog/route")
     
     // Fetch directly from HubSpot (much faster than HTTP request)
-    const posts = await fetchHubSpotBlogPosts()
+    // Add timeout to prevent hanging
+    const posts = await Promise.race([
+      fetchHubSpotBlogPosts(),
+      new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error("HubSpot API timeout")), 5000)
+      )
+    ])
+    
     const transformedPosts = posts.map(transformHubSpotPost)
     
     // Sort by publish date (newest first)
@@ -30,6 +43,7 @@ async function getBlogPosts(): Promise<BlogPost[]> {
     // Remove debug fields
     return transformedPosts.map(({ originalSlug, originalId, originalUrl, ...post }) => post)
   } catch (error) {
+    // Silently fail - don't block the site from loading
     console.error("Error fetching blog posts:", error)
     return []
   }
