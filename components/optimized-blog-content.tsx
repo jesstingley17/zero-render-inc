@@ -11,7 +11,7 @@ interface OptimizedBlogContentProps {
 /**
  * Component that ensures images in blog content render correctly
  * The content is already processed by rewriteHubSpotContent which handles
- * URL rewriting and Next.js image optimization
+ * URL rewriting
  */
 export function OptimizedBlogContent({ content, className, style }: OptimizedBlogContentProps) {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -27,12 +27,25 @@ export function OptimizedBlogContent({ content, className, style }: OptimizedBlo
       if (!img.style.maxWidth) {
         img.style.maxWidth = "100%"
         img.style.height = "auto"
+        img.style.display = "block"
       }
       
-      // Add error handling
+      // Add error handling with retry
       img.onerror = function() {
         console.error("Failed to load image:", img.src)
-        // Keep the image but log the error
+        const originalSrc = img.src
+        
+        // Try to reload after a short delay
+        setTimeout(() => {
+          if (img.src === originalSrc) {
+            img.src = originalSrc + (originalSrc.includes('?') ? '&' : '?') + 'retry=' + Date.now()
+          }
+        }, 1000)
+      }
+      
+      // Ensure image loads
+      if (!img.complete) {
+        img.loading = "lazy"
       }
     })
   }, [content])

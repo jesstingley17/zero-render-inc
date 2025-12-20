@@ -97,7 +97,7 @@ export function rewriteHubSpotUrl(url: string | null | undefined): string | null
 export function rewriteHubSpotContent(html: string | null | undefined): string {
   if (!html || typeof html !== 'string') return html || ''
   
-  // Replace img src attributes and add optimization attributes
+  // Replace img src attributes and rewrite URLs
   html = html.replace(
     /<img([^>]*)\ssrc=["']([^"']+)["']([^>]*)>/gi,
     (match, before, src, after) => {
@@ -107,31 +107,24 @@ export function rewriteHubSpotContent(html: string | null | undefined): string {
       const widthMatch = match.match(/width=["']?(\d+)["']?/i)
       const heightMatch = match.match(/height=["']?(\d+)["']?/i)
       
-      // Use Next.js Image optimization API for better performance
-      // Encode the URL for use in Next.js Image API
-      const encodedSrc = encodeURIComponent(rewrittenSrc)
-      const width = widthMatch ? widthMatch[1] : '1200'
-      const height = heightMatch ? heightMatch[1] : '800'
-      
-      // Use Next.js Image optimization API with quality and format optimization
-      // Limit max width to 1920px to prevent huge images
-      // Use lower quality (60) for better compression while maintaining visual quality
-      const maxWidth = Math.min(Number(width), 1920)
-      const optimizedSrc = `/_next/image?url=${encodedSrc}&w=${maxWidth}&q=60`
-      
-      // Add width, height, and lazy loading attributes
+      // Add width, height, and lazy loading attributes if not present
       let optimizedAfter = after
       if (!widthMatch) {
-        optimizedAfter = ` width="${width}"${optimizedAfter}`
+        optimizedAfter = ` width="800"${optimizedAfter}`
       }
       if (!heightMatch) {
-        optimizedAfter = ` height="${height}"${optimizedAfter}`
+        optimizedAfter = ` height="600"${optimizedAfter}`
       }
       if (!match.includes('loading=')) {
         optimizedAfter = ` loading="lazy" decoding="async"${optimizedAfter}`
       }
+      if (!match.includes('style=')) {
+        optimizedAfter = ` style="max-width: 100%; height: auto;"${optimizedAfter}`
+      }
       
-      return `<img${before} src="${optimizedSrc}"${optimizedAfter}>`
+      // Use the rewritten URL directly (not Next.js image optimization for now)
+      // This ensures images load correctly
+      return `<img${before} src="${rewrittenSrc}"${optimizedAfter}>`
     }
   )
   
