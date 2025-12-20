@@ -5,6 +5,19 @@ const nextConfig = {
   },
   // Enable compression
   compress: true,
+  // Optimize JavaScript bundles
+  experimental: {
+    optimizePackageImports: [
+      '@radix-ui/react-accordion',
+      '@radix-ui/react-dialog',
+      '@radix-ui/react-dropdown-menu',
+      '@radix-ui/react-popover',
+      '@radix-ui/react-select',
+      '@radix-ui/react-tabs',
+      '@radix-ui/react-tooltip',
+      'lucide-react',
+    ],
+  },
   // Optimize images
   images: {
     remotePatterns: [
