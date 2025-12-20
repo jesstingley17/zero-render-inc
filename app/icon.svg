@@ -2,21 +2,21 @@
   <!-- Black background -->
   <rect width="180" height="180" fill="black" rx="37"/>
   
-  <!-- ZR Monogram - stylized interconnected design, centered and optimized for favicon -->
-  <g transform="translate(25, 40) scale(0.72)">
-    <!-- Z letter - angular, modern design -->
-    <path d="M 20 20 L 110 20 L 110 38 L 55 38 L 55 68 L 110 68 L 110 86 L 20 86 L 20 68 L 75 68 L 75 38 L 20 38 Z" fill="white"/>
+  <!-- ZR Monogram - centered, larger, and optimized for favicon visibility -->
+  <g transform="translate(20, 25) scale(0.78)">
+    <!-- Z letter - angular, modern design with proper proportions -->
+    <path d="M 25 25 L 115 25 L 115 42 L 60 42 L 60 72 L 115 72 L 115 89 L 25 89 L 25 72 L 80 72 L 80 42 L 25 42 Z" fill="white"/>
     
     <!-- R letter - connected to Z, with distinctive open loop -->
-    <!-- R top bar and vertical -->
-    <path d="M 110 20 L 170 20 L 170 52 L 148 52 L 148 38 L 130 38 L 130 20 Z" fill="white"/>
+    <!-- R top horizontal bar -->
+    <path d="M 115 25 L 175 25 L 175 42 L 115 42 Z" fill="white"/>
+    <!-- R vertical left side -->
+    <rect x="115" y="25" width="20" height="64" fill="white"/>
     <!-- R middle horizontal -->
-    <rect x="110" y="52" width="38" height="18" fill="white"/>
-    <!-- R bottom section -->
-    <path d="M 130 52 L 170 52 L 170 70 L 148 70 L 148 86 L 130 86 Z" fill="white"/>
-    <!-- R leg extending down -->
-    <path d="M 130 70 L 170 70 L 170 86 L 130 86 Z" fill="white"/>
-    <!-- R open loop - create the distinctive R shape -->
-    <path d="M 148 52 L 170 52 L 170 70 L 148 70 Z" fill="black"/>
+    <rect x="115" y="55" width="40" height="18" fill="white"/>
+    <!-- R bottom right leg -->
+    <path d="M 135 55 L 175 55 L 175 73 L 155 73 L 155 89 L 135 89 Z" fill="white"/>
+    <!-- R open loop - create the distinctive R shape by removing inner area -->
+    <path d="M 155 55 L 175 55 L 175 73 L 155 73 Z" fill="black"/>
   </g>
 </svg>
