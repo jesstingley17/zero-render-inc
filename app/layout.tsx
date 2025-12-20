@@ -9,6 +9,13 @@ import "./globals.css"
 const geist = Geist({ subsets: ["latin"] })
 const geistMono = Geist_Mono({ subsets: ["latin"] })
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+}
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.zero-render.com"),
   title: "ZeroRender - Premier Web Design Studio & Digital Design Agency",
