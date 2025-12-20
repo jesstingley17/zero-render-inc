@@ -17,8 +17,15 @@ export const metadata: Metadata = {
     "ZeroRender is a premier web design studio and digital design agency creating bespoke websites and brands. As a leading branding studio, we build digital products for startups and small businesses.",
   generator: "v0.app",
   icons: {
-    icon: "/logo_bw_inverted.png",
-    apple: "/logo_bw_inverted.png",
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icon-dark-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icon-light-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+    shortcut: "/icon.svg",
   },
   alternates: {
     canonical: "https://www.zero-render.com",
