@@ -102,6 +102,8 @@ async function BlogPostsList() {
                 fill
                 className="object-cover group-hover:scale-110 transition-transform duration-700 pointer-events-none"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                quality={85}
+                loading="lazy"
               />
               <div className="absolute top-4 left-4 z-20 pointer-events-none">
                 <span className="inline-block px-3 py-1 text-xs uppercase tracking-widest bg-white/20 backdrop-blur-sm text-white border border-white/30">

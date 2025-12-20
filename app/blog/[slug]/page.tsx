@@ -5,6 +5,7 @@ import { Menu, X, ArrowLeft, Calendar, Clock, Share2 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { useParams } from "next/navigation"
+import { OptimizedBlogContent } from "@/components/optimized-blog-content"
 
 interface BlogPost {
   slug: string
@@ -121,7 +122,14 @@ export default function BlogPostPage() {
       >
         <div className="container mx-auto px-4 sm:px-6 md:px-8 h-16 sm:h-18 md:h-20 flex items-center justify-between">
           <Link href="/" className="block transition-opacity hover:opacity-70 duration-300">
-            <img src="/logo_bw_inverted.png" alt="ZeroRender" className="h-7 sm:h-10 md:h-12 w-auto" />
+            <Image 
+              src="/logo_bw_inverted.png" 
+              alt="ZeroRender" 
+              width={120}
+              height={48}
+              className="h-7 sm:h-10 md:h-12 w-auto" 
+              priority
+            />
           </Link>
 
           <nav className="hidden md:flex items-center space-x-6 lg:space-x-8">
@@ -193,10 +201,14 @@ export default function BlogPostPage() {
       {post.featuredImage && (
         <div className="relative h-[50vh] sm:h-[60vh] md:h-[70vh] overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent z-10" />
-          <img
+          <Image
             src={post.featuredImage}
             alt={post.title}
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
+            sizes="100vw"
+            priority
+            quality={85}
           />
           <div className="absolute bottom-0 left-0 right-0 z-20 px-4 sm:px-6 md:px-8 pb-12 sm:pb-16 md:pb-20">
             <div className="container mx-auto max-w-4xl">
@@ -336,9 +348,9 @@ export default function BlogPostPage() {
           </div>
 
           {/* Post Content */}
-          <div
+          <OptimizedBlogContent
+            content={post.content}
             className="prose prose-invert max-w-none blog-content mb-12 sm:mb-16 md:mb-20"
-            dangerouslySetInnerHTML={{ __html: post.content }}
             style={{
               color: "#e4e4e7",
               fontSize: "1.125rem",

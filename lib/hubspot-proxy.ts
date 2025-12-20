@@ -97,12 +97,38 @@ export function rewriteHubSpotUrl(url: string | null | undefined): string | null
 export function rewriteHubSpotContent(html: string | null | undefined): string {
   if (!html || typeof html !== 'string') return html || ''
   
-  // Replace img src attributes
+  // Replace img src attributes and add optimization attributes
   html = html.replace(
     /<img([^>]*)\ssrc=["']([^"']+)["']([^>]*)>/gi,
     (match, before, src, after) => {
       const rewrittenSrc = rewriteHubSpotUrl(src)
-      return `<img${before} src="${rewrittenSrc}"${after}>`
+      
+      // Extract existing width/height if present
+      const widthMatch = match.match(/width=["']?(\d+)["']?/i)
+      const heightMatch = match.match(/height=["']?(\d+)["']?/i)
+      
+      // Use Next.js Image optimization API for better performance
+      // Encode the URL for use in Next.js Image API
+      const encodedSrc = encodeURIComponent(rewrittenSrc)
+      const width = widthMatch ? widthMatch[1] : '800'
+      const height = heightMatch ? heightMatch[1] : '600'
+      
+      // Use Next.js Image optimization API
+      const optimizedSrc = `/_next/image?url=${encodedSrc}&w=${width}&q=85`
+      
+      // Add width, height, and lazy loading attributes
+      let optimizedAfter = after
+      if (!widthMatch) {
+        optimizedAfter = ` width="${width}"${optimizedAfter}`
+      }
+      if (!heightMatch) {
+        optimizedAfter = ` height="${height}"${optimizedAfter}`
+      }
+      if (!match.includes('loading=')) {
+        optimizedAfter = ` loading="lazy" decoding="async"${optimizedAfter}`
+      }
+      
+      return `<img${before} src="${optimizedSrc}"${optimizedAfter}>`
     }
   )
   
