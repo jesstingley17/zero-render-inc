@@ -52,3 +52,4 @@ CNAME   blog    hubspot.com                🟠 Yes  HubSpot (blog) ← CORRECT!
 
 Your blog subdomain setup is correct. Keep it as is!
 
+

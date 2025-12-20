@@ -166,3 +166,4 @@ A       @       216.150.1.1                 ⚪ No    Auto  ❌ WRONG IP
 
 I can help verify they're configured correctly!
 
+

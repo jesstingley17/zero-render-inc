@@ -76,3 +76,4 @@ echo "4. Set up SSL certificates"
 echo ""
 echo "See VPS_FULL_SETUP.md for detailed instructions!"
 
+
