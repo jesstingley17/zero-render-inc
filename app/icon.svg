@@ -1,0 +1,22 @@
+<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Black background -->
+  <rect width="180" height="180" fill="black" rx="37"/>
+  
+  <!-- ZR Monogram - stylized interconnected design, centered and optimized for favicon -->
+  <g transform="translate(25, 40) scale(0.72)">
+    <!-- Z letter - angular, modern design -->
+    <path d="M 20 20 L 110 20 L 110 38 L 55 38 L 55 68 L 110 68 L 110 86 L 20 86 L 20 68 L 75 68 L 75 38 L 20 38 Z" fill="white"/>
+    
+    <!-- R letter - connected to Z, with distinctive open loop -->
+    <!-- R top bar and vertical -->
+    <path d="M 110 20 L 170 20 L 170 52 L 148 52 L 148 38 L 130 38 L 130 20 Z" fill="white"/>
+    <!-- R middle horizontal -->
+    <rect x="110" y="52" width="38" height="18" fill="white"/>
+    <!-- R bottom section -->
+    <path d="M 130 52 L 170 52 L 170 70 L 148 70 L 148 86 L 130 86 Z" fill="white"/>
+    <!-- R leg extending down -->
+    <path d="M 130 70 L 170 70 L 170 86 L 130 86 Z" fill="white"/>
+    <!-- R open loop - create the distinctive R shape -->
+    <path d="M 148 52 L 170 52 L 170 70 L 148 70 Z" fill="black"/>
+  </g>
+</svg>
