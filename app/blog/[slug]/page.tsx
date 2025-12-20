@@ -79,6 +79,7 @@ export default function BlogPostPage() {
     return (
       <main className="bg-black text-white min-h-screen flex items-center justify-center">
         <div className="text-center">
+          <h1 className="text-4xl font-bold mb-4">Loading Blog Post</h1>
           <p className="text-lg text-zinc-400">Loading post...</p>
         </div>
       </main>
