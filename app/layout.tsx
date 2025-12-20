@@ -79,21 +79,14 @@ export default function RootLayout({
             })(window, document, "clarity", "script", "uo291mbuhk");
           `}
         </Script>
+        {/* Google Ads - Load only one gtag.js and configure both IDs */}
         <Script src="https://www.googletagmanager.com/gtag/js?id=AW-17815193591" strategy="lazyOnload" />
-        <Script src="https://www.googletagmanager.com/gtag/js?id=AW-16828943917" strategy="lazyOnload" />
-        <Script id="google-ads-new" strategy="lazyOnload">
+        <Script id="google-ads-config" strategy="lazyOnload">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', 'AW-17815193591');
-          `}
-        </Script>
-        <Script id="google-analytics" strategy="lazyOnload">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
             gtag('config', 'AW-16828943917');
             function gtag_report_conversion(url) {
               var callback = function () {

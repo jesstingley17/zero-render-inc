@@ -110,11 +110,13 @@ export function rewriteHubSpotContent(html: string | null | undefined): string {
       // Use Next.js Image optimization API for better performance
       // Encode the URL for use in Next.js Image API
       const encodedSrc = encodeURIComponent(rewrittenSrc)
-      const width = widthMatch ? widthMatch[1] : '800'
-      const height = heightMatch ? heightMatch[1] : '600'
+      const width = widthMatch ? widthMatch[1] : '1200'
+      const height = heightMatch ? heightMatch[1] : '800'
       
-      // Use Next.js Image optimization API
-      const optimizedSrc = `/_next/image?url=${encodedSrc}&w=${width}&q=85`
+      // Use Next.js Image optimization API with quality and format optimization
+      // Limit max width to 1920px to prevent huge images
+      const maxWidth = Math.min(Number(width), 1920)
+      const optimizedSrc = `/_next/image?url=${encodedSrc}&w=${maxWidth}&q=75`
       
       // Add width, height, and lazy loading attributes
       let optimizedAfter = after
