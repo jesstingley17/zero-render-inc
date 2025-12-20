@@ -53,6 +53,27 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'images.bannerbear.com',
       },
+      // HubSpot domains
+      {
+        protocol: 'https',
+        hostname: 'cdn2.hubspot.net',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.hubspot.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.hubspotusercontent*.net',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.hs-sites.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.hs-sitescontent.com',
+      },
     ],
     // Optimize images for better performance
     formats: ['image/avif', 'image/webp'],

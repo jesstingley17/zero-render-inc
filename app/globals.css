@@ -194,6 +194,9 @@
 
 .blog-content img {
   @apply w-full h-auto rounded-lg my-10 shadow-2xl;
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
 .blog-content blockquote {
