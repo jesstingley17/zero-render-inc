@@ -115,8 +115,9 @@ export function rewriteHubSpotContent(html: string | null | undefined): string {
       
       // Use Next.js Image optimization API with quality and format optimization
       // Limit max width to 1920px to prevent huge images
+      // Use lower quality (60) for better compression while maintaining visual quality
       const maxWidth = Math.min(Number(width), 1920)
-      const optimizedSrc = `/_next/image?url=${encodedSrc}&w=${maxWidth}&q=75`
+      const optimizedSrc = `/_next/image?url=${encodedSrc}&w=${maxWidth}&q=60`
       
       // Add width, height, and lazy loading attributes
       let optimizedAfter = after

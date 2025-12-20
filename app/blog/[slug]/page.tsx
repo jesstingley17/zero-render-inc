@@ -209,7 +209,7 @@ export default function BlogPostPage() {
             className="object-cover"
             sizes="100vw"
             priority
-            quality={85}
+            quality={60}
           />
           <div className="absolute bottom-0 left-0 right-0 z-20 px-4 sm:px-6 md:px-8 pb-12 sm:pb-16 md:pb-20">
             <div className="container mx-auto max-w-4xl">
@@ -290,6 +290,7 @@ export default function BlogPostPage() {
                         alt={post.author}
                         fill
                         className="object-cover"
+                        quality={60}
                         unoptimized={post.authorAvatar?.startsWith('http') || false}
                         onError={() => {
                           console.log('Author avatar failed to load:', post.authorAvatar)

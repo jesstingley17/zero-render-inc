@@ -102,7 +102,7 @@ async function BlogPostsList() {
                 fill
                 className="object-cover group-hover:scale-110 transition-transform duration-700 pointer-events-none"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                quality={85}
+                quality={60}
                 loading="lazy"
               />
               <div className="absolute top-4 left-4 z-20 pointer-events-none">
