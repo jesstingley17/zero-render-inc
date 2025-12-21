@@ -581,6 +581,31 @@ export default function Page() {
         </div>
       </section>
 
+      {/* Newsletter Section - Prominent Placement */}
+      <section id="newsletter" className="py-20 sm:py-24 md:py-32 px-4 sm:px-6 md:px-8 border-t border-white/10 relative overflow-hidden">
+        {/* Background gradient for prominence */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black via-zinc-950 to-black" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.05),transparent_50%)]" />
+        
+        <div className="container mx-auto max-w-5xl relative z-10">
+          <div className="text-center mb-12 sm:mb-14 md:mb-16">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter mb-5 sm:mb-6 md:mb-8">
+              Stay in the Loop
+            </h2>
+            <p className="text-lg sm:text-xl md:text-2xl text-zinc-300 max-w-3xl mx-auto leading-relaxed mb-2">
+              Get the latest updates on AI-powered tools, design trends, and tips to grow your business.
+            </p>
+            <p className="text-sm sm:text-base md:text-lg text-zinc-500 max-w-2xl mx-auto">
+              No spam, just valuable insights delivered to your inbox.
+            </p>
+          </div>
+
+          <div className="bg-white/5 border border-white/10 p-8 sm:p-10 md:p-12 backdrop-blur-sm">
+            <NewsletterForm />
+          </div>
+        </div>
+      </section>
+
       {/* Team */}
       <section id="team" className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 md:px-8">
         <div className="container mx-auto max-w-6xl">
@@ -953,23 +978,6 @@ export default function Page() {
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Newsletter Section */}
-      <section id="newsletter" className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 md:px-8 bg-zinc-950 border-t border-white/10">
-        <div className="container mx-auto max-w-4xl">
-          <div className="text-center mb-10 sm:mb-12 md:mb-16">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-4 sm:mb-5 md:mb-6">
-              Stay in the Loop
-            </h2>
-            <p className="text-base sm:text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed">
-              Get the latest updates on AI-powered tools, design trends, and tips to grow your business. No spam, just
-              valuable insights.
-            </p>
-          </div>
-
-          <NewsletterForm />
         </div>
       </section>
 
