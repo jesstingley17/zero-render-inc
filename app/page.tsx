@@ -1074,51 +1074,42 @@ export default function Page() {
             </div>
 
             <div className="md:pl-10">
-              <h4 className="text-xs sm:text-sm uppercase tracking-widest text-zinc-500 mb-5 sm:mb-6">Sitemap</h4>
-              <ul className="space-y-3 sm:space-y-4 text-sm sm:text-base text-zinc-300">
+              <h4 className="text-xs sm:text-sm uppercase tracking-widest text-zinc-500 mb-6 sm:mb-8">Sitemap</h4>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 sm:gap-x-12 gap-y-4 sm:gap-y-5">
                 {["Expertise", "Approach", "Packages", "Team", "Vision"].map((item) => (
-                  <li key={item}>
-                    <a
-                      href={`#${item.toLowerCase()}`}
-                      className="hover:text-white transition-colors touch-manipulation inline-block py-1"
-                    >
-                      {item}
-                    </a>
-                  </li>
+                  <a
+                    key={item}
+                    href={`#${item.toLowerCase()}`}
+                    className="text-sm sm:text-base text-zinc-400 hover:text-white transition-colors touch-manipulation inline-block py-1"
+                  >
+                    {item}
+                  </a>
                 ))}
-                <li>
-                  <a
-                    href="/services"
-                    className="hover:text-white transition-colors touch-manipulation inline-block py-1"
-                  >
-                    Services
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="/about"
-                    className="hover:text-white transition-colors touch-manipulation inline-block py-1"
-                  >
-                    About
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="/blog"
-                    className="hover:text-white transition-colors touch-manipulation inline-block py-1"
-                  >
-                    Blog
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="/privacy-policy"
-                    className="hover:text-white transition-colors touch-manipulation inline-block py-1"
-                  >
-                    Privacy Policy
-                  </a>
-                </li>
-              </ul>
+                <a
+                  href="/services"
+                  className="text-sm sm:text-base text-zinc-400 hover:text-white transition-colors touch-manipulation inline-block py-1"
+                >
+                  Services
+                </a>
+                <a
+                  href="/about"
+                  className="text-sm sm:text-base text-zinc-400 hover:text-white transition-colors touch-manipulation inline-block py-1"
+                >
+                  About
+                </a>
+                <a
+                  href="/blog"
+                  className="text-sm sm:text-base text-zinc-400 hover:text-white transition-colors touch-manipulation inline-block py-1"
+                >
+                  Blog
+                </a>
+                <a
+                  href="/privacy-policy"
+                  className="text-sm sm:text-base text-zinc-400 hover:text-white transition-colors touch-manipulation inline-block py-1"
+                >
+                  Privacy Policy
+                </a>
+              </div>
             </div>
           </div>
 
