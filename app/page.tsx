@@ -18,82 +18,194 @@ const HubSpotCTAPopup = dynamic(() => import("@/components/hubspot-cta-popup"), 
 })
 
 function NewsletterForm() {
-  const [email, setEmail] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!email) {
-      setMessage({ type: "error", text: "Please enter your email address" })
-      return
-    }
-
-    setLoading(true)
-    setMessage(null)
-
-    try {
-      const response = await fetch("/api/newsletter-subscribe", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to subscribe")
-      }
-
-      setMessage({ type: "success", text: "Successfully subscribed! Check your inbox for a confirmation email." })
-      setEmail("")
-    } catch (error) {
-      console.error("Newsletter subscription error:", error)
-      setMessage({
-        type: "error",
-        text: error instanceof Error ? error.message : "Failed to subscribe. Please try again.",
-      })
-    } finally {
-      setLoading(false)
-    }
-  }
-
   return (
     <div className="max-w-2xl mx-auto">
-      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-        <div className="flex-1">
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email address"
-            required
-            className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/5 border border-white/10 text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-white transition-all duration-300 text-base sm:text-lg"
-          />
+      <style jsx>{`
+        #af-form-597809634 {
+          border: 1px solid rgba(255, 255, 255, 0.1) !important;
+          background-color: transparent !important;
+          border-radius: 0 !important;
+        }
+        
+        #af-form-597809634 .af-header {
+          background-color: transparent !important;
+          background-image: none !important;
+          border: none !important;
+          padding: 0 0 1.5rem 0 !important;
+        }
+        
+        #af-form-597809634 .af-body {
+          background-color: transparent !important;
+          padding: 0 !important;
+        }
+        
+        #af-form-597809634 .af-element {
+          padding: 0 0 1.5rem 0 !important;
+          margin: 0 !important;
+        }
+        
+        #af-form-597809634 label.previewLabel {
+          color: #ffffff !important;
+          font-family: inherit !important;
+          font-size: 0.875rem !important;
+          font-weight: 500 !important;
+          margin-bottom: 0.5rem !important;
+          width: 100% !important;
+          text-align: left !important;
+          float: none !important;
+        }
+        
+        #af-form-597809634 .af-textWrap {
+          width: 100% !important;
+          float: none !important;
+        }
+        
+        #af-form-597809634 input.text,
+        #af-form-597809634 input[type="text"],
+        #af-form-597809634 input[type="email"] {
+          width: 100% !important;
+          padding: 0.875rem 1rem !important;
+          background-color: rgba(255, 255, 255, 0.05) !important;
+          border: 1px solid rgba(255, 255, 255, 0.1) !important;
+          color: #ffffff !important;
+          font-family: inherit !important;
+          font-size: 1rem !important;
+          border-radius: 0 !important;
+          transition: all 0.3s ease !important;
+          box-sizing: border-box !important;
+        }
+        
+        #af-form-597809634 input.text:focus,
+        #af-form-597809634 input[type="text"]:focus,
+        #af-form-597809634 input[type="email"]:focus {
+          outline: none !important;
+          border-color: #ffffff !important;
+          background-color: rgba(255, 255, 255, 0.08) !important;
+          box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1) !important;
+        }
+        
+        #af-form-597809634 input.text::placeholder,
+        #af-form-597809634 input[type="text"]::placeholder,
+        #af-form-597809634 input[type="email"]::placeholder {
+          color: rgba(255, 255, 255, 0.5) !important;
+        }
+        
+        #af-form-597809634 .buttonContainer {
+          text-align: left !important;
+          margin-top: 0.5rem !important;
+        }
+        
+        #af-form-597809634 input.submit {
+          background-color: #ffffff !important;
+          color: #000000 !important;
+          border: 1px solid #ffffff !important;
+          padding: 0.875rem 2rem !important;
+          font-family: inherit !important;
+          font-size: 0.875rem !important;
+          font-weight: 600 !important;
+          text-transform: uppercase !important;
+          letter-spacing: 0.05em !important;
+          border-radius: 0 !important;
+          cursor: pointer !important;
+          transition: all 0.3s ease !important;
+          width: auto !important;
+        }
+        
+        #af-form-597809634 input.submit:hover {
+          background-color: #000000 !important;
+          color: #ffffff !important;
+          border-color: #ffffff !important;
+        }
+        
+        #af-form-597809634 .af-footer {
+          background-color: transparent !important;
+          padding: 1rem 0 0 0 !important;
+          border: none !important;
+        }
+        
+        #af-form-597809634 .af-footer p {
+          color: rgba(255, 255, 255, 0.5) !important;
+          font-size: 0.75rem !important;
+          text-align: center !important;
+        }
+        
+        #af-form-597809634 .poweredBy,
+        #af-form-597809634 .privacyPolicy {
+          display: none !important;
+        }
+      `}</style>
+      
+      <form method="post" className="af-form-wrapper" acceptCharset="UTF-8" action="https://www.aweber.com/scripts/addlead.pl">
+        <div style={{ display: "none" }}>
+          <input type="hidden" name="meta_web_form_id" value="597809634" />
+          <input type="hidden" name="meta_split_id" value="" />
+          <input type="hidden" name="listname" value="awlist6931035" />
+          <input type="hidden" name="redirect" value="https://www.aweber.com/thankyou-coi.htm?m=text" id="redirect_6d64ba6dfa8b704cec059071a0ad3f18" />
+          <input type="hidden" name="meta_adtracking" value="Newsletter_Signup" />
+          <input type="hidden" name="meta_message" value="1" />
+          <input type="hidden" name="meta_required" value="name (awf_first),name (awf_last),email" />
+          <input type="hidden" name="meta_tooltip" value="" />
         </div>
-        <button
-          type="submit"
-          disabled={loading}
-          className="px-6 sm:px-8 py-3 sm:py-4 bg-white text-black hover:bg-zinc-900 hover:text-white border border-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm sm:text-base uppercase tracking-wider whitespace-nowrap"
-        >
-          {loading ? "Subscribing..." : "Subscribe"}
-        </button>
+        
+        <div id="af-form-597809634" className="af-form">
+          <div id="af-body-597809634" className="af-body af-standards">
+            <div className="af-element">
+              <label className="previewLabel" htmlFor="awf_field-118469295-first">First Name:</label>
+              <div className="af-textWrap">
+                <input
+                  id="awf_field-118469295-first"
+                  type="text"
+                  className="text"
+                  name="name (awf_first)"
+                  defaultValue=""
+                  tabIndex={500}
+                />
+              </div>
+              <div className="af-clear"></div>
+            </div>
+            
+            <div className="af-element">
+              <label className="previewLabel" htmlFor="awf_field-118469295-last">Last Name:</label>
+              <div className="af-textWrap">
+                <input
+                  id="awf_field-118469295-last"
+                  className="text"
+                  type="text"
+                  name="name (awf_last)"
+                  defaultValue=""
+                  tabIndex={501}
+                />
+              </div>
+              <div className="af-clear"></div>
+            </div>
+            
+            <div className="af-element">
+              <label className="previewLabel" htmlFor="awf_field-118469296">Email:</label>
+              <div className="af-textWrap">
+                <input
+                  className="text"
+                  id="awf_field-118469296"
+                  type="email"
+                  name="email"
+                  defaultValue=""
+                  tabIndex={502}
+                />
+              </div>
+              <div className="af-clear"></div>
+            </div>
+            
+            <div className="af-element buttonContainer">
+              <input name="submit" className="submit" type="submit" value="Subscribe" tabIndex={503} />
+              <div className="af-clear"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div style={{ display: "none" }}>
+          <img src="https://forms.aweber.com/form/displays.htm?id=rJzsHAycbMws" alt="" />
+        </div>
       </form>
-
-      {message && (
-        <div
-          className={`mt-4 sm:mt-6 p-4 rounded-md ${
-            message.type === "success"
-              ? "bg-green-500/20 border border-green-500/50 text-green-200"
-              : "bg-red-500/20 border border-red-500/50 text-red-200"
-          }`}
-        >
-          {message.text}
-        </div>
-      )}
-
+      
       <p className="text-xs sm:text-sm text-zinc-500 mt-4 sm:mt-6 text-center">
         By subscribing, you agree to our Privacy Policy. Unsubscribe at any time.
       </p>
