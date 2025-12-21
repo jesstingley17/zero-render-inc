@@ -768,7 +768,7 @@ export default function Page() {
               </div>
 
               <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-1.5 sm:mb-2">Jessica-Lee Tingley</h3>
-              <p className="text-sm sm:text-base md:text-lg text-zinc-400 mb-3 sm:mb-4">Sales & Client Acquisition</p>
+              <p className="text-sm sm:text-base md:text-lg text-zinc-400 mb-3 sm:mb-4">Founder, Web Developer & Sales</p>
               <p className="text-sm sm:text-base text-zinc-500 leading-relaxed">
                 Specializes in creating elegant, user-centric digital experiences with a focus on modern web
                 technologies and AI integration.
